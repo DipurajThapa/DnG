@@ -1,16 +1,17 @@
 # Goliath Development Acceptance — 12 September 2026
 
-**Branch:** `develop/goliath`  
+**Implementation branch:** `develop/goliath-multi-user-acceptance`
 **Development database:** Neon `goliath-development` (`br-cool-field-aupbzqgf`)  
 **Production deployment touched:** No  
-**Main code baseline:** merged previously; current role-coverage work remains on `develop/goliath` until validated  
+**Main code baseline:** merged previously; current multi-user acceptance work remains outside `main` until validated
 **Vercel required:** No
 
 ## Decision
 
 **Structural / contract acceptance: PASS**  
 **First real named-user Google sign-in: PASS**  
-**Multi-user / cross-role browser acceptance: BLOCKED pending second verified identity**  
+**Sponsor and Team Member identity/link acceptance: PASS**
+**Session-bound cross-role probes: READY, awaiting execution by both real users**
 **Production release decision: NOT READY**
 
 This record covers the off-Vercel development environment only. It must not be used as evidence that a hosted production OAuth/browser journey has passed acceptance.
@@ -45,6 +46,15 @@ PASS for the first real development identity:
 
 A frontend blank-screen issue observed immediately after OAuth was traced to self-triggering navigation `MutationObserver` callbacks and corrected through the observer-guard hotfix. The successful post-hotfix dashboard load is accepted as evidence that the first named-user browser shell is functional.
 
+PASS for the two newly invited real identities:
+
+- `jarupid.apaht@gmail.com` is email-verified, actively linked to governed user `bob`, and resolves Sponsor responsibilities for projects `A` and `GOLIATH-DEV`;
+- `thenewrules101@gmail.com` is email-verified, actively linked to governed user `f5-dev`, and resolves the Team Member responsibility for project `F5` / team `dev`;
+- the two accounts resolve to different Auth subjects and different governed users;
+- their project scopes remain deliberately different. The Team Member has not been widened to `GOLIATH-DEV` merely to simplify acceptance.
+
+The invitation and login dependency is therefore closed. What remains is evidence from each account's own authenticated browser session that its allow/deny boundaries behave as configured and persist to the audit ledger.
+
 ## Role model / coverage
 
 The supported role model is now centralised in `platform_identity.role_catalog` rather than being defined only by scattered UI conditionals.
@@ -65,7 +75,7 @@ Canonical supported roles:
 
 For `GOLIATH-DEV`, all 11 roles now have at least one effective governed responsibility that covers the project through the appropriate project/program/portfolio/organisation/org-unit scope.
 
-Only Enterprise Admin and Project Manager currently have a linked real Auth identity. The remaining role holders are deliberately configured but unlinked pending second-user/multi-user acceptance.
+Enterprise Admin, Project Manager, Sponsor and Team Member now have linked real Auth identities. The other configured role holders remain deliberately unlinked; configuration coverage is not treated as proof of a real-user journey.
 
 The UI now distinguishes:
 
@@ -88,7 +98,8 @@ The off-Vercel development workflow validates:
 - integration/outcome instrumentation contracts;
 - legacy anonymous/public RPC lockdown;
 - canonical role catalog and development role-coverage seed;
-- integrated development contract checks.
+- integrated development contract checks;
+- multi-user acceptance RPC/UI contracts and deployable JavaScript asset routing.
 
 ## Database invariants
 
@@ -193,31 +204,54 @@ The controlled `GOLIATH-DEV` brownfield source intentionally remains at the esta
 
 This is intentional. Positive workflow state transitions should occur through authenticated governed actions rather than through database seeding merely to manufacture a passing business workflow.
 
-## Remaining blocked acceptance
+## Multi-user acceptance increment
 
-### Second identity / cross-role acceptance — BLOCKED
+The development candidate now includes a session-bound `Run access check` action backed by `goliath_api.run_role_acceptance_probe(assignment)`.
 
-A second real verified identity is still required to prove separation between different people and responsibilities.
+For the currently authenticated identity and selected responsibility, the probe checks:
+
+- Auth identity to governed-user and responsibility binding;
+- the role-required navigation surface;
+- exclusion of a same-organisation project outside the responsibility scope, where one exists;
+- Enterprise Admin access allowed only for Enterprise Admin;
+- Project Cockpit management access allowed only for the governing delivery-control roles;
+- durable persistence of the result in `platform_identity.audit_events` as `identity.acceptance.probed`.
+
+It does not mutate commitments, tasks, baselines, decisions or project scope. Enterprise Admin also receives a `multi_user_acceptance_readiness` projection showing Sponsor/Team Member linkage, distinct Auth subjects and whether both audited probes have passed. If the Team Member is on another project, the UI says so explicitly rather than implying selected-project coverage.
+
+The projection separates two decisions:
+
+- `readyForRoleBoundaryAcceptance` requires the two distinct real identities and their successful audited probes;
+- `readyForGovernedWorkflow` additionally requires a linked Project Manager and a real candidate/commitment for the Sponsor project, plus at least one governed commitment owned by the Team Member inside the Team Member's assigned scope.
+
+Current prerequisite state:
+
+- `GOLIATH-DEV` has a linked Project Manager and 14 proposed candidates, so the PM-to-Sponsor workflow can be started through governed UI actions;
+- `F5` has a linked Team Member but no governed commitment owned by that user. A Project Manager must create or confirm and assign one through the application before a genuine Team Member update/persistence journey can pass;
+- F5 Project Manager `F5-PM` is configured but not linked to a real Auth identity. This remains a positive-workflow setup gap, not an invitation/login blocker for the Team Member.
+
+### Real-session cross-role acceptance — READY / PENDING EXECUTION
 
 Still unverified:
 
-- Enterprise Admin invitation issued to a second real Google account;
-- second identity claim/link;
-- Sponsor/Delivery/PMO/etc. positive role journey under a distinct identity;
-- cross-user and cross-context denial using two real sessions;
-- named decision approval by a different person;
-- initial baseline approval with real separation of duties;
-- logout/login continuity for both identities.
+- Sponsor probe executed from `jarupid.apaht@gmail.com` with the Sponsor responsibility selected;
+- Team Member probe executed from `thenewrules101@gmail.com` with the Team Member responsibility selected;
+- logout/login continuity for both identities;
+- Sponsor positive decision/report journey within the Sponsor's project scope;
+- Team Member positive owned-work/evidence journey within `F5`;
+- linked/authorised Project Manager preparation of one Team Member-owned governed commitment in `F5`;
+- named decision or baseline approval by a different authorised person;
+- downstream report and audit projection after a governed state transition.
 
-No fake JWT, same-user self-impersonation, or fabricated Auth user will be used to close these gates.
+No fake JWT, same-user self-impersonation, scope widening or fabricated Auth user will be used to close these gates.
 
 ## Remaining release gates
 
 Before a hosted release candidate:
 
-1. invite and link a second real verified identity to one of the configured role holders;
-2. execute cross-role allow/deny checks using two real sessions;
-3. execute the full governed business chain on development data;
+1. execute the session-bound allow/deny probe from the Sponsor and Team Member accounts;
+2. execute permitted Sponsor and Team Member journeys inside each account's actual project scope;
+3. execute the full governed business chain on development data with separate submitter and approver;
 4. verify audit events and downstream report projections after each material state transition;
 5. verify logout/login continuity;
 6. run regression and security checks again;

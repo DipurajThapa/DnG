@@ -12,6 +12,18 @@ A signed-in person may have multiple legitimate responsibility contexts. The UI 
 
 Development/test fixtures may expose broader persona switching, but write operations must still be fenced from production data.
 
+## Membership and assignment model
+
+The administration journey is `organisation onboarding -> organisation administration -> project administration -> team/project assignment -> individual access`. It is not an authority-inheritance chain.
+
+- `organisation_memberships` is the admission boundary. Membership does not imply access to project content.
+- `project_memberships` records participation without duplicating permission policy.
+- `teams` and `team_memberships` are organisation-owned and reusable across projects.
+- `project_team_assignments` shares a team with one or more projects without changing the team roster.
+- `responsibility_assignments` remains the effective scoped access context. `responsibility_sources` records whether access is direct, inherited through a team/project assignment, or retained from the legacy model.
+
+Removing one source does not remove access supported by another active source. A person may hold different responsibilities in different projects and may belong to more than one team.
+
 ## High-level matrix
 
 | Role | Primary purpose | Must not inherit by default |
@@ -21,12 +33,15 @@ Development/test fixtures may expose broader persona switching, but write operat
 | Program Manager | cross-project outcomes/dependencies | routine PM assignment authority |
 | Project Director | authorised oversight/commercial control | enterprise identity administration |
 | Project Manager | project control, coordination, forecast | functional resource-allocation authority |
+| Project Admin | project membership, team assignment and project-scoped access | organisation administration or project-delivery visibility |
 | PMO / Controls | assurance, completeness, traceability | unrestricted sensitive commercial data |
 | Resource Manager | functional demand/capacity/allocation | project approval/decision authority |
 | Delivery Lead | team coordination | sponsor/PM governance authority |
 | Agile Delivery Lead | flow/team coordination | default project assignment authority |
 | Team Member | owned work/evidence/handoffs | project-wide management authority |
 | Enterprise Admin | organisation/context/access administration | automatic confidential project-content access |
+
+`Enterprise Admin` is the compatibility key for the Organisation Admin role. Its authority must be constrained to its organisation. Project Admin authority must be constrained to one project and may not appoint another Project Admin.
 
 ## Enforcement
 

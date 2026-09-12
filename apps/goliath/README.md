@@ -4,12 +4,14 @@ This directory is the target Vercel root for the Goliath web application.
 
 ## Current state
 
-The files currently copied here reproduce the connected acceptance bridge served from the repository root. This bridge is **not** the final functional baseline.
+This directory contains the named-user development candidate for Goliath Project Control & Decision Intelligence. It is connected to the isolated `goliath-development` Neon branch through `runtime-config.js` and is intentionally separate from the anonymous, read-only production bridge at the repository root.
 
-The authoritative functional baseline is the validated Goliath source package that passed 236/236 regression tests and the earlier end-to-end browser/product audit. That runtime is being imported under `packages/goliath-core` and then wired into this web application without discarding its guarded writes, role journeys, workflow state, traceability or recovery behavior.
+Implemented development capabilities include named-user Auth linking, identity-bound responsibility contexts, governed commitment/evidence/decision workflows, immutable baseline controls, role-aware projections, reporting, diagnostics, invitations and audited real-user acceptance probes.
+
+The validated source package that passed 236/236 regression tests remains historical evidence for retained behavior; this development candidate must still pass its own real-user, cross-role and end-to-end acceptance gates before release.
 
 ## Production rule
 
-The anonymous acting-context selector is for controlled acceptance only. Production named users must receive only the responsibility contexts authorised for their authenticated identity.
+Do not replace the production bridge until this candidate has passed the release gates in `../../docs/architecture/DEVELOPMENT_ACCEPTANCE_2026-09-12.md`. Named users must receive only the responsibilities bound to their authenticated identity. Configuration coverage or same-user role switching is not valid multi-user acceptance evidence.
 
 See `../../docs/architecture/NORTH_STAR.md` and `../../docs/architecture/ROLE_AUTHORITY.md`.
