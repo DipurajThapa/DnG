@@ -1,6 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "ignoreCommand": "node -e \"process.exit(process.env.VERCEL_PROJECT_PRODUCTION_URL==='goliath-project-management-tracker.vercel.app'?1:0)\"",
+  "git": {
+    "deploymentEnabled": {
+      "develop/goliath": false
+    }
+  },
+  "ignoreCommand": "node -e \"process.exit(process.env.VERCEL_GIT_COMMIT_REF==='main' && process.env.VERCEL_PROJECT_PRODUCTION_URL==='goliath-project-management-tracker.vercel.app'?1:0)\"",
   "headers": [
     {
       "source": "/(.*)",
