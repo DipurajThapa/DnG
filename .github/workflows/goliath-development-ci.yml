@@ -99,6 +99,10 @@ jobs:
           test -f apps/goliath/migrations/20260912_role_action_capability_matrix_fix.sql
           test -f apps/goliath/migrations/20260912_role_action_data_action_fix.sql
           test -f apps/goliath/migrations/20260912_authorization_self_test.sql
+          test -f apps/goliath/migrations/20260912_capability_enforcement_wrappers.sql
+          test -f apps/goliath/migrations/20260912_remaining_action_policy.sql
+          test -f apps/goliath/migrations/20260912_remaining_capability_wrappers.sql
+          test -f apps/goliath/migrations/20260912_final_mutation_policy.sql
           test -f apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql
 
       - name: Validate governance surfaces have no silent bypass
@@ -123,6 +127,14 @@ jobs:
           grep -q "data_action" apps/goliath/migrations/20260912_role_action_data_action_fix.sql
           grep -q "run_authorization_self_test" apps/goliath/migrations/20260912_authorization_self_test.sql
           grep -q "admin_authorization_acceptance_summary" apps/goliath/migrations/20260912_authorization_self_test.sql
+          grep -q "require_capability" apps/goliath/migrations/20260912_capability_enforcement_wrappers.sql
+          grep -q "change','prepare" apps/goliath/migrations/20260912_remaining_action_policy.sql
+          grep -q "work','update" apps/goliath/migrations/20260912_remaining_action_policy.sql
+          grep -q "notification-recipient" apps/goliath/migrations/20260912_remaining_action_policy.sql
+          grep -q "_policy_update_activity" apps/goliath/migrations/20260912_remaining_capability_wrappers.sql
+          grep -q "_policy_prepare_change_request" apps/goliath/migrations/20260912_remaining_capability_wrappers.sql
+          grep -q "reconcile-exception" apps/goliath/migrations/20260912_final_mutation_policy.sql
+          grep -q "admin-effort-sample" apps/goliath/migrations/20260912_final_mutation_policy.sql
 
       - name: Run integrated development contract checks
         run: node apps/goliath/tests/development-contract-check.mjs
