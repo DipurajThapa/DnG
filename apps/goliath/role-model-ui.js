@@ -4,7 +4,7 @@ import { runtimeConfig } from './runtime-config.js';
 const client=createClient({auth:{url:runtimeConfig.authUrl,allowAnonymous:false},dataApi:{url:runtimeConfig.dataApiUrl}});
 const roleLabels={
   'enterprise-admin':'Enterprise Admin','portfolio-manager':'Portfolio Manager','program-manager':'Program Manager',
-  'project-director':'Project Director','project-manager':'Project Manager','pmo':'PMO / Project Controls',
+  'project-director':'Project Director','project-manager':'Project Manager','project-admin':'Project Admin','pmo':'PMO / Project Controls',
   'resource-manager':'Resource Manager','delivery-lead':'Delivery Lead','agile-delivery-lead':'Agile Delivery Lead',
   'team-member':'Team Member','sponsor':'Sponsor'
 };
@@ -45,7 +45,7 @@ async function loadCoverage(projectId=null){
   if(loading)return;
   const ctx=document.getElementById('contextSelect')?.value;
   const view=document.getElementById('view');
-  if(!ctx||!view||view.querySelector('h1')?.textContent!=='Administration')return;
+  if(!ctx||!view||view.querySelector('h1')?.textContent!=='People & Access')return;
   loading=true;
   try{
     const ref=await rpc('admin_reference_data',{p_acting_assignment_id:ctx});
@@ -135,7 +135,7 @@ async function inviteRoleHolder(roleKey){
 function attach(){
   humaniseResponsibilityOptions();
   const view=document.getElementById('view');
-  if(view?.querySelector('h1')?.textContent==='Administration'&&!document.getElementById('roleCoveragePanel'))loadCoverage();
+  if(view?.querySelector('h1')?.textContent==='People & Access'&&!document.getElementById('roleCoveragePanel'))loadCoverage();
 }
 
 new MutationObserver(attach).observe(document.documentElement,{childList:true,subtree:true});
