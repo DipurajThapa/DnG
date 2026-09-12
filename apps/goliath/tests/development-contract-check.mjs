@@ -22,6 +22,10 @@ const invitationFlow=read('apps/goliath/migrations/20260912_invitation_flow_v2.s
 const capabilityMatrix=read('apps/goliath/migrations/20260912_role_action_capability_matrix.sql');
 const capabilityFix=read('apps/goliath/migrations/20260912_role_action_data_action_fix.sql');
 const authSelfTest=read('apps/goliath/migrations/20260912_authorization_self_test.sql');
+const enforcement=read('apps/goliath/migrations/20260912_capability_enforcement_wrappers.sql');
+const remainingPolicy=read('apps/goliath/migrations/20260912_remaining_action_policy.sql');
+const remainingWrappers=read('apps/goliath/migrations/20260912_remaining_capability_wrappers.sql');
+const finalMutation=read('apps/goliath/migrations/20260912_final_mutation_policy.sql');
 const devRoleSeed=read('apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql');
 
 function assert(condition,message){if(!condition)throw new Error(message);}
@@ -46,14 +50,18 @@ contains(invitationFlow,['admin_invitation_targets','admin_create_identity_invit
 contains(capabilityMatrix,['role_action_policy','action_catalog','allow','conditional','deny','my_capabilities','admin_role_capability_matrix'],'capability matrix');
 contains(capabilityFix,['data_action','capability_mode','context_has_data_class'],'capability data-action fix');
 contains(authSelfTest,['authorization_self_test_runs','run_authorization_self_test','policy_hash','admin_authorization_acceptance_summary'],'authorization self-test');
+contains(enforcement,['require_capability','_policy_resolve_decision','_policy_confirm_commitment_candidate','capacity','request'],'first capability enforcement');
+contains(remainingPolicy,['requirement','baseline','change','prepare','work','update','notification-recipient','access','data-class-override'],'remaining action policy');
+contains(remainingWrappers,['_policy_update_activity','_policy_prepare_change_request','_policy_set_commitment_evidence_spec','_policy_refresh_responsibility_notifications','require_capability'],'remaining capability wrappers');
+contains(finalMutation,['share-invitation','reconcile-exception','admin-effort-sample','_policy_create_reconciliation_issue','_policy_record_admin_effort_sample'],'final mutation policy');
 contains(devRoleSeed,['DEVELOPMENT-ONLY','GDEV-DL-AISHA','GDEV-AGILE','GDEV-TM-KHALID'],'development role seed');
 contains(baselineImmutability,['trg_pc_baselines_no_update','trg_pc_baselines_no_delete','edapos_reject_mutation_on_append_only'],'baseline immutability');
 contains(legacyLockdown,['goliath_api.list_contexts()','goliath_api.workspace(text)','goliath_api.append_context_event','goliath_api.append_project_event','goliath_api.require_context(text)','goliath_api.context_allows_project(text,text)'],'legacy public RPC lockdown');
 contains(vercel,['deploymentEnabled','develop/goliath'],'deployment isolation');
-contains(ci,['node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','node --check apps/goliath/role-model-ui.js','node --check apps/goliath/diagnostics-ui.js','node --check apps/goliath/invitation-ui.js','node --check apps/goliath/capability-ui.js','role_action_capability_matrix','authorization_self_test'],'CI governance checks');
+contains(ci,['node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','node --check apps/goliath/role-model-ui.js','node --check apps/goliath/diagnostics-ui.js','node --check apps/goliath/invitation-ui.js','node --check apps/goliath/capability-ui.js','role_action_capability_matrix','authorization_self_test','remaining_action_policy','final_mutation_policy'],'CI governance checks');
 
 const migrationFiles=[
-  '20260912_commitment_evidence_foundation.sql','20260912_data_ownership_classification.sql','20260912_decision_dependency_semantics.sql','20260912_mvp_health_foundation.sql','20260912_reporting_projection_foundation.sql','20260912_notification_escalation_foundation.sql','20260912_capacity_planned_cost_foundation.sql','20260912_raid_control_foundation.sql','20260912_baseline_change_control_foundation.sql','20260912_requirements_traceability_foundation.sql','20260912_initial_baseline_approval.sql','20260912_governance_authorization_hardening.sql','20260912_baseline_immutability_hardening.sql','20260912_integration_health_outcome_metrics.sql','20260912_legacy_public_rpc_lockdown.sql','20260912_role_catalog_admin_coverage.sql','20260912_reconciliation_evidence_diagnostics.sql','20260912_acceptance_readiness.sql','20260912_invitation_flow_v2.sql','20260912_role_action_capability_matrix.sql','20260912_role_action_capability_matrix_fix.sql','20260912_role_action_data_action_fix.sql','20260912_authorization_self_test.sql'
+  '20260912_commitment_evidence_foundation.sql','20260912_data_ownership_classification.sql','20260912_decision_dependency_semantics.sql','20260912_mvp_health_foundation.sql','20260912_reporting_projection_foundation.sql','20260912_notification_escalation_foundation.sql','20260912_capacity_planned_cost_foundation.sql','20260912_raid_control_foundation.sql','20260912_baseline_change_control_foundation.sql','20260912_requirements_traceability_foundation.sql','20260912_initial_baseline_approval.sql','20260912_governance_authorization_hardening.sql','20260912_baseline_immutability_hardening.sql','20260912_integration_health_outcome_metrics.sql','20260912_legacy_public_rpc_lockdown.sql','20260912_role_catalog_admin_coverage.sql','20260912_reconciliation_evidence_diagnostics.sql','20260912_acceptance_readiness.sql','20260912_invitation_flow_v2.sql','20260912_role_action_capability_matrix.sql','20260912_role_action_capability_matrix_fix.sql','20260912_role_action_data_action_fix.sql','20260912_authorization_self_test.sql','20260912_capability_enforcement_wrappers.sql','20260912_remaining_action_policy.sql','20260912_remaining_capability_wrappers.sql','20260912_final_mutation_policy.sql'
 ];
 for(const f of migrationFiles)assert(fs.existsSync(path.join(root,'apps/goliath/migrations',f)),`missing migration ${f}`);
 assert(fs.existsSync(path.join(root,'apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql')),'missing development role-coverage seed');
