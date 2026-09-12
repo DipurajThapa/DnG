@@ -60,6 +60,7 @@ jobs:
           grep -q 'Only evidence-supported measures are calculated' apps/goliath/pmo-controls-ui.js
           grep -q 'Do not estimate a lower number' apps/goliath/pmo-controls-ui.js
           grep -q 'My responsibilities' apps/goliath/role-model-ui.js
+          grep -q 'Configuration is not treated as proof' apps/goliath/role-model-ui.js
           grep -q 'not an acting-as' apps/goliath/migrations/20260912_role_catalog_admin_coverage.sql
           grep -q 'does not silently discard ambiguous records' apps/goliath/diagnostics-ui.js
 
@@ -90,6 +91,7 @@ jobs:
           test -f apps/goliath/migrations/20260912_legacy_public_rpc_lockdown.sql
           test -f apps/goliath/migrations/20260912_role_catalog_admin_coverage.sql
           test -f apps/goliath/migrations/20260912_reconciliation_evidence_diagnostics.sql
+          test -f apps/goliath/migrations/20260912_acceptance_readiness.sql
           test -f apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql
 
       - name: Validate governance surfaces have no silent bypass
@@ -109,10 +111,12 @@ jobs:
           grep -q "goliath_api.workspace" apps/goliath/migrations/20260912_legacy_public_rpc_lockdown.sql
           grep -q "goliath_api.append_project_event" apps/goliath/migrations/20260912_legacy_public_rpc_lockdown.sql
           grep -q "admin_role_coverage" apps/goliath/role-model-ui.js
+          grep -q "acceptance_readiness" apps/goliath/role-model-ui.js
           grep -q "platform_identity.role_catalog" apps/goliath/migrations/20260912_role_catalog_admin_coverage.sql
           grep -q "integration_reconciliation_queue" apps/goliath/diagnostics-ui.js
           grep -q "evidence_gap_diagnostics" apps/goliath/diagnostics-ui.js
           grep -q "integration_reconciliation_issues_v2" apps/goliath/migrations/20260912_reconciliation_evidence_diagnostics.sql
+          grep -q "releaseReady" apps/goliath/migrations/20260912_acceptance_readiness.sql
 
       - name: Run integrated development contract checks
         run: node apps/goliath/tests/development-contract-check.mjs
