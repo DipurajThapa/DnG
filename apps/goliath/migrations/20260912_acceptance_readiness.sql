@@ -64,7 +64,7 @@ BEGIN
     ELSE false END;
 
   SELECT count(*) INTO v_commitments FROM public.pc_commitments WHERE project_id=p_project_id AND state NOT IN ('proposed','cancelled','waived','closed');
-  SELECT count(*) INTO v_candidates FROM public.pc_commitment_candidates WHERE project_id=p_project_id AND state='proposed';
+  SELECT count(*) INTO v_candidates FROM public.pc_commitment_candidates WHERE project_id=p_project_id AND status='proposed';
   SELECT count(*) INTO v_missing_specs FROM public.pc_commitments WHERE project_id=p_project_id AND state NOT IN ('proposed','cancelled','waived','closed') AND jsonb_array_length(evidence_spec_json::jsonb)=0;
   SELECT count(*) INTO v_baselines FROM public.pc_baselines WHERE project_id=p_project_id AND state='approved';
   SELECT count(*) INTO v_requirements FROM public.pc_requirements WHERE project_id=p_project_id AND state NOT IN ('rejected','retired');
