@@ -18,7 +18,7 @@ assert(!app.includes('Project Management Tracker'),'legacy tracker branding must
 
 contains(app,[
   "reports:'Reports'",
-  'notification_queue',
+  'home.notifications',
   'project_capacity_projection',
   'planned_cost_projection',
   'snapshot_project_report',
