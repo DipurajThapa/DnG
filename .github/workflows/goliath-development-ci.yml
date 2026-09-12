@@ -1,0 +1,54 @@
+name: Goliath Development CI
+
+on:
+  push:
+    branches:
+      - develop/goliath
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'apps/goliath/**'
+      - 'docs/architecture/**'
+      - '.github/workflows/goliath-development-ci.yml'
+
+jobs:
+  static-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Validate JavaScript syntax
+        run: |
+          node --check apps/goliath/app.js
+          node --check apps/goliath/runtime-config.js
+
+      - name: Validate development runtime boundary
+        shell: bash
+        run: |
+          grep -q "environment: 'development'" apps/goliath/runtime-config.js
+          grep -q "ep-ancient-night-au3h4qqm" apps/goliath/runtime-config.js
+          grep -q 'deploymentEnabled' apps/goliath/vercel.json
+          grep -q 'develop/goliath' apps/goliath/vercel.json
+
+      - name: Validate product direction guardrails
+        shell: bash
+        run: |
+          grep -q 'Project Control & Decision Intelligence' apps/goliath/index.html
+          grep -q 'Commitment + Evidence + Decision Intelligence' docs/architecture/DEVELOPMENT_ENVIRONMENT.md
+          grep -q 'Activities become execution evidence' docs/architecture/CURRENT_VS_TARGET_GAP_MATRIX_2026-09-12.md
+
+      - name: Validate migration set is present
+        shell: bash
+        run: |
+          test -f apps/goliath/migrations/20260912_commitment_evidence_foundation.sql
+          test -f apps/goliath/migrations/20260912_data_ownership_classification.sql
+          test -f apps/goliath/migrations/20260912_decision_dependency_semantics.sql
+          test -f apps/goliath/migrations/20260912_mvp_health_foundation.sql
+          test -f apps/goliath/migrations/20260912_mvp_read_model.sql
