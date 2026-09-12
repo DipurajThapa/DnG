@@ -11,6 +11,7 @@ Promote one tested artifact without allowing the development runtime or developm
 - Sponsor and Team Member session-bound access probes pass from their own identities.
 - The governed workflow passes through UI, authentication, authorization, API, persistence, audit, reporting and logout/login continuity.
 - A separate authorised person completes the decision or baseline approval step.
+- For customer-onboarding releases, signed entitlement issuance/consumption passes active, grace, restricted, revoked, expired, tampered and replay scenarios without creating project authority.
 - Backup/restore, monitoring, rate-limit and rollback owners are recorded.
 
 ## Release configuration
@@ -44,6 +45,7 @@ Do not promote when any of the following is true:
 
 - runtime origin, Auth, Data API, CORS or CSP do not agree;
 - a role can read or write outside its governed scope;
+- a commercial entitlement can create a user, team, project membership, responsibility or permission;
 - an allowed state transition does not persist or appear in audit/report projections;
 - a denial depends only on hidden UI;
 - a production metric or financial value is fabricated from missing data;

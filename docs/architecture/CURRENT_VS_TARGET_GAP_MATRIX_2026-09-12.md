@@ -44,7 +44,7 @@ Status values:
 | AI provenance and governed assistance | PARTIAL | The validated core has deterministic/assistive controls; the hosted candidate still needs approved provider binding and real evaluation data. |
 | Validated core in Git | IMPLEMENTED | Exact archive hash verified and 236/236 tests reproduced from `packages/goliath-core`. |
 | Development runtime isolation | IMPLEMENTED | Local origins only; automatic Vercel deployment is disabled until an explicit release candidate. |
-| David entitlement/admission contract | MISSING | Replace URL-only handoff with signed entitlement, organisation provisioning and lifecycle enforcement. |
+| David entitlement/admission contract | PARTIAL | Signed Ed25519 contract, lifecycle decision rules, replay checks and append-only Goliath receipt schema are implemented. Server-side issuance/consumption and hosted lifecycle acceptance remain. |
 | Hosted production acceptance | PENDING ACCEPTANCE | Configure a dedicated release runtime, OAuth/CORS/CSP, execute E2E, then promote. |
 | Design-partner outcome proof | MISSING | Run three tenants and collect the blueprint's M1–M13 evidence over the required period. |
 | Client reporting, Ask Goliath, benefits and organisational memory | DEFERRED | Preserve authorization/provenance design hooks; do not expand MVP breadth yet. |
@@ -53,10 +53,10 @@ Status values:
 
 1. Keep the named-user candidate fail closed outside approved local origins.
 2. Protect `main` with static, contract and full validated-core regression checks.
-3. Execute Sponsor and Team Member session-bound allow/deny probes.
-4. Create one Team Member-owned commitment in `F5` through an authorised Project Manager.
+3. Execute Sponsor and Team Member session-bound allow/deny probes; both identity links are verified, but neither persisted probe exists yet.
+4. Link a real F5 Project Manager, then create one Team Member-owned commitment in `F5` through that authorised context.
 5. Run the complete governed chain: UI -> authentication -> authorization -> API -> persistence -> audit -> report -> logout/login.
-6. Implement David's signed entitlement and organisation-provisioning contract.
+6. Integrate the implemented signed entitlement contract with server-side David issuance and Goliath admission consumption.
 7. Prepare a dedicated hosted release configuration; never reuse development runtime settings for production.
 
 ## Non-negotiable guardrails

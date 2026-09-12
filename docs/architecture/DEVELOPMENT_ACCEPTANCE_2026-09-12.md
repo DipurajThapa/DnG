@@ -12,6 +12,7 @@
 **First real named-user Google sign-in: PASS**  
 **Sponsor and Team Member identity/link acceptance: PASS**
 **Session-bound cross-role probes: READY, awaiting execution by both real users**
+**David -> Goliath entitlement contract foundation: PASS; runtime integration pending**
 **Production release decision: NOT READY**
 
 This record covers the off-Vercel development environment only. It must not be used as evidence that a hosted production OAuth/browser journey has passed acceptance.
@@ -76,15 +77,16 @@ Canonical supported roles:
 2. Portfolio Manager
 3. Program Manager
 4. Project Director
-5. Project Manager
-6. PMO / Project Controls
-7. Resource Manager
-8. Delivery Lead
-9. Agile Delivery Lead
-10. Team Member
-11. Sponsor
+5. Project Admin
+6. Project Manager
+7. PMO / Project Controls
+8. Resource Manager
+9. Delivery Lead
+10. Agile Delivery Lead
+11. Team Member
+12. Sponsor
 
-For `GOLIATH-DEV`, all 11 roles now have at least one effective governed responsibility that covers the project through the appropriate project/program/portfolio/organisation/org-unit scope.
+For `GOLIATH-DEV`, all 12 roles now have at least one effective governed responsibility that covers the project through the appropriate project/program/portfolio/organisation/org-unit scope.
 
 Enterprise Admin, Project Manager, Sponsor and Team Member now have linked real Auth identities. The other configured role holders remain deliberately unlinked; configuration coverage is not treated as proof of a real-user journey.
 
@@ -113,6 +115,22 @@ The workflow now runs for relevant pushes and pull requests to `main`, and may b
 - integrated development contract checks;
 - multi-user acceptance RPC/UI contracts and deployable JavaScript asset routing;
 - installation, TypeScript build and all 236 validated-core regression tests.
+- the Ed25519 entitlement contract's signature, temporal, audience, replay, lifecycle and authority-field boundaries.
+
+## David -> Goliath entitlement boundary
+
+PASS at contract and persistence-foundation level:
+
+- canonical organisation-scoped payloads are signed with Ed25519 and an explicit rotation key ID;
+- verification binds issuer, audience, organisation and validity window;
+- grant ID and nonce replay checks fail closed;
+- active, grace, restricted and revoked states map to explicit organisation admission modes;
+- role, permission, user, team and project-membership fields are rejected;
+- verification never grants project or individual authority;
+- verified receipts and organisation-admission events have an append-only migration with browser access revoked;
+- the migration was applied successfully to the isolated `acceptance-probe-verify-20260912` branch and the resulting objects, triggers, future-event filter and browser-denial privileges were inspected.
+
+Still pending: a server-side David issuer, managed signing keys, atomic Goliath verification/receipt consumption, organisation mapping and hosted lifecycle acceptance. The migration has not been applied to `goliath-development` or production.
 
 ## Database invariants
 

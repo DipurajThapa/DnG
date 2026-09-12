@@ -26,7 +26,7 @@ Exit: source identity and test baseline are reproducible from GitHub.
 
 Exit: replacement David passes route/content/contact/link/responsive tests.
 
-## Phase 3 - Shared identity/admission (implementation complete; acceptance pending)
+## Phase 3 - Shared identity and project access (implementation complete; acceptance pending)
 
 - Replace persona/acting-role production behavior with authenticated named users.
 - Establish organisation membership, entitlement and responsibility mappings.
@@ -42,10 +42,12 @@ Exit: cross-role denial tests and multi-user acceptance pass.
 
 Exit: full validated feature baseline is available at the canonical Goliath URL.
 
-## Phase 5 - David commercial/onboarding integration (not started)
+## Phase 5 - David commercial/onboarding integration (contract foundation complete; runtime pending)
 
 - Connect verified customer identity, commercial decision, entitlement, organisation bootstrap and Goliath admission.
 - Preserve safe recovery for payment/provider/activation failures.
+- Use the signed Ed25519 organisation-entitlement contract in `packages/identity-contracts`.
+- Persist replay-protected receipts and append-only admission events without creating project roles or memberships.
 
 Exit: David -> Goliath customer lifecycle passes end to end with no invented success state.
 

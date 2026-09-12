@@ -25,6 +25,8 @@ The original ChatGPT Site remains the rollback/reference experience while the re
 
 Any David workspace handoff must use the canonical admission path and may not infer project authority from a successful enquiry, payment redirect, matching email domain or organisation-admin role.
 
+The shared signed-envelope implementation is in `../../packages/identity-contracts`. It is a server-side contract foundation only: David's static browser application does not hold signing keys and cannot issue an entitlement. See `../../docs/architecture/ENTITLEMENT_ADMISSION_CONTRACT.md` for the lifecycle and remaining integration work.
+
 See:
 
 - `MIGRATION_BASELINE.md`

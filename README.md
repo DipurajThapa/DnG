@@ -20,6 +20,8 @@ Read `docs/architecture/NORTH_STAR.md` before changing product boundaries, data 
 
 The temporary simplified Goliath Vercel UI is an acceptance bridge. The previously validated full Goliath source and its 236-test regression are now restored under `packages/goliath-core`; the Neon named-user candidate remains under acceptance.
 
+The signed David -> Goliath organisation-entitlement boundary is implemented under `packages/identity-contracts`, with append-only receipt/admission persistence in the Goliath migration set. It grants no project or individual authority; server-side runtime integration remains pending.
+
 ## Repository direction
 
 ```text

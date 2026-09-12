@@ -7,6 +7,7 @@ on:
     paths:
       - 'apps/goliath/**'
       - 'packages/goliath-core/**'
+      - 'packages/identity-contracts/**'
       - 'docs/architecture/**'
       - '.github/workflows/goliath-development-ci.yml'
   pull_request:
@@ -15,6 +16,7 @@ on:
     paths:
       - 'apps/goliath/**'
       - 'packages/goliath-core/**'
+      - 'packages/identity-contracts/**'
       - 'docs/architecture/**'
       - '.github/workflows/goliath-development-ci.yml'
   workflow_dispatch:
@@ -44,6 +46,8 @@ jobs:
           node --check apps/goliath/runtime-config.js
           node --check apps/goliath/tests/development-contract-check.mjs
           node --check apps/goliath/tests/runtime-boundary-check.mjs
+          node --check packages/identity-contracts/src/index.js
+          node --check packages/identity-contracts/tests/entitlement.test.js
 
       - name: Validate fail-closed development runtime boundary
         shell: bash
@@ -117,6 +121,7 @@ jobs:
           test -f apps/goliath/migrations/20260912_role_action_capability_matrix_fix.sql
           test -f apps/goliath/migrations/20260912_role_action_data_action_fix.sql
           test -f apps/goliath/migrations/20260912_authorization_self_test.sql
+          test -f apps/goliath/migrations/20260912_entitlement_admission_receipts.sql
           test -f apps/goliath/migrations/20260912_capability_enforcement_wrappers.sql
           test -f apps/goliath/migrations/20260912_remaining_action_policy.sql
           test -f apps/goliath/migrations/20260912_remaining_capability_wrappers.sql
@@ -163,6 +168,10 @@ jobs:
         run: |
           node apps/goliath/tests/development-contract-check.mjs
           node apps/goliath/tests/runtime-boundary-check.mjs
+
+      - name: Run identity entitlement contract checks
+        working-directory: packages/identity-contracts
+        run: npm test
 
   validated-core-regression:
     runs-on: ubuntu-latest

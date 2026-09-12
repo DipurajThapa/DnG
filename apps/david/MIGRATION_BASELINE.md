@@ -45,6 +45,8 @@ David is the vendor/customer lifecycle application. It must not become a second 
 
 David may establish customer, order, entitlement, organisation-bootstrap and admission evidence. Goliath remains responsible for project-control data and project-level authorization.
 
+The shared `packages/identity-contracts` foundation now defines a signed Ed25519 organisation-entitlement envelope. It intentionally excludes user, role, team, project-membership and permission fields. Runtime issuance and consumption remain disabled until server-side key management and atomic receipt persistence are connected.
+
 ## Required integration correction
 
 Legacy behavior recorded in the prior implementation audit:
