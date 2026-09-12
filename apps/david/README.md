@@ -1,34 +1,32 @@
 # David
 
-David is the public/commercial website for the Goliath Project Management Tracker.
+David is the public/customer lifecycle application in the consolidated David + Goliath platform.
 
-## Canonical platform direction
+## Product boundary
 
-David is being migrated from the legacy ChatGPT Sites deployment to the same controlled delivery stack as Goliath:
+David owns:
 
-- Source control: GitHub (`DipurajThapa/DnG`)
-- Hosting: Vercel
-- Application backend / identity / database where required: Neon
-- Goliath production application: https://goliath-project-management-tracker.vercel.app/
+- public product/solution/deployment/pricing information;
+- enquiries and demo/contact requests;
+- customer identity verification and account continuation;
+- commercial selection/order/entitlement records when those providers are activated;
+- organisation bootstrap, onboarding and deployment/access administration;
+- the controlled admission handoff into Goliath.
 
-## Current legacy site
+David does **not** own project execution state, project work, project evidence, project decisions, resource allocation or project financial projections. Those belong to Goliath.
 
-Legacy David Site:
+## Current migration state
 
-https://david.dippurajthapa.chatgpt.site/
+The original ChatGPT Site remains the rollback/reference experience while the replacement is reconstructed under GitHub. The source checkout of the legacy Site is not exportable through the currently available interface, so the replacement must be verified route-by-route against the saved implementation evidence and live experience.
 
-This URL remains the current reference until the GitHub/Vercel replacement passes acceptance and cutover is approved.
+## Canonical Goliath target
 
-## Migration boundary
+`https://goliath-project-management-tracker.vercel.app/`
 
-The native ChatGPT Sites source checkout is not exportable through the currently available Site/Library interface. Therefore this directory is the canonical migration destination, but it does not pretend that the original Site source code has been exported byte-for-byte.
+Any David workspace handoff must use the canonical admission path and may not infer project authority from a successful enquiry, payment redirect, matching email domain or organisation-admin role.
 
-The migration will reconstruct the current David experience using the recovered implementation inventory and visible live-site content, then validate routes and handoffs before cutover.
+See:
 
-## David → Goliath contract
-
-Every production `Open workspace`, sign-in/workspace continuation, or Project Management Tracker CTA must resolve to:
-
-https://goliath-project-management-tracker.vercel.app/
-
-Tracker-specific legacy `EDAPOS` wording must be replaced with `Goliath`. Historical references that describe an older system or migration context may remain when clearly labelled.
+- `MIGRATION_BASELINE.md`
+- `../../docs/architecture/NORTH_STAR.md`
+- `../../docs/architecture/WORKFLOW_ACCEPTANCE.md`
