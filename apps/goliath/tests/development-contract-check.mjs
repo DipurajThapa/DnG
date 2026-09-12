@@ -19,6 +19,7 @@ const reconciliation=read('apps/goliath/migrations/20260912_reconciliation_evide
 const acceptanceReadiness=read('apps/goliath/migrations/20260912_acceptance_readiness.sql');
 const invitationFlow=read('apps/goliath/migrations/20260912_invitation_flow_v2.sql');
 const multiUserAcceptance=read('apps/goliath/migrations/20260912_multi_user_acceptance_probe.sql');
+const governanceAccess=read('apps/goliath/migrations/20260912_governance_membership_team_access.sql');
 const devRoleSeed=read('apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql');
 
 function assert(condition,message){if(!condition)throw new Error(message);}
@@ -106,6 +107,35 @@ contains(app,[
   'Access checks passed and persisted.',
   'Claim the invitation issued for your governed role and scope.'
 ],'multi-user acceptance UI');
+
+contains(app,[
+  'People & Access',
+  'Assign or reassign person',
+  'Share team with projects',
+  'admin_assign_person',
+  'admin_assign_team',
+  'access_management_state',
+  'Organisation and project administration never grant delivery access'
+],'membership/team access UI');
+
+contains(governanceAccess,[
+  'platform_identity.organisation_memberships',
+  'public.ec_teams',
+  'public.ec_team_memberships',
+  'public.pc_project_memberships',
+  'public.pc_project_team_assignments',
+  'public.ec_responsibility_sources',
+  "'project-admin'",
+  'access_admin_context',
+  'admin_add_organisation_member',
+  'admin_create_team',
+  'admin_assign_person',
+  'admin_assign_team',
+  'access_management_state',
+  'scope_organisation',
+  'Project Admin may manage only the assigned project',
+  'Organisation Admin or Project Admin authority is required'
+],'membership/team access backend');
 
 contains(roles,[
   'multi_user_acceptance_readiness',
@@ -236,7 +266,8 @@ const migrationFiles=[
   '20260912_reconciliation_evidence_diagnostics.sql',
   '20260912_acceptance_readiness.sql',
   '20260912_invitation_flow_v2.sql',
-  '20260912_multi_user_acceptance_probe.sql'
+  '20260912_multi_user_acceptance_probe.sql',
+  '20260912_governance_membership_team_access.sql'
 ];
 for(const f of migrationFiles)assert(fs.existsSync(path.join(root,'apps/goliath/migrations',f)),`missing migration ${f}`);
 assert(fs.existsSync(path.join(root,'apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql')),'missing development role-coverage seed');
