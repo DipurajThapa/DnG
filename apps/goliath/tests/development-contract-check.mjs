@@ -126,6 +126,11 @@ contains(multiUserAcceptance,[
   'multi_user_acceptance_readiness',
   'sponsor-probe',
   'team-probe',
+  'sponsor-workflow-input',
+  'team-owned-work',
+  'readyForRoleBoundaryAcceptance',
+  'readyForGovernedWorkflow',
+  'do not seed a passing result',
   'access is intentionally not widened'
 ],'multi-user acceptance backend');
 

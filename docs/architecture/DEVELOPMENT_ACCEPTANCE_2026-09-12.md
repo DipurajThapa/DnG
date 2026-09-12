@@ -219,6 +219,17 @@ For the currently authenticated identity and selected responsibility, the probe 
 
 It does not mutate commitments, tasks, baselines, decisions or project scope. Enterprise Admin also receives a `multi_user_acceptance_readiness` projection showing Sponsor/Team Member linkage, distinct Auth subjects and whether both audited probes have passed. If the Team Member is on another project, the UI says so explicitly rather than implying selected-project coverage.
 
+The projection separates two decisions:
+
+- `readyForRoleBoundaryAcceptance` requires the two distinct real identities and their successful audited probes;
+- `readyForGovernedWorkflow` additionally requires a linked Project Manager and a real candidate/commitment for the Sponsor project, plus at least one governed commitment owned by the Team Member inside the Team Member's assigned scope.
+
+Current prerequisite state:
+
+- `GOLIATH-DEV` has a linked Project Manager and 14 proposed candidates, so the PM-to-Sponsor workflow can be started through governed UI actions;
+- `F5` has a linked Team Member but no governed commitment owned by that user. A Project Manager must create or confirm and assign one through the application before a genuine Team Member update/persistence journey can pass;
+- F5 Project Manager `F5-PM` is configured but not linked to a real Auth identity. This remains a positive-workflow setup gap, not an invitation/login blocker for the Team Member.
+
 ### Real-session cross-role acceptance — READY / PENDING EXECUTION
 
 Still unverified:
@@ -228,6 +239,7 @@ Still unverified:
 - logout/login continuity for both identities;
 - Sponsor positive decision/report journey within the Sponsor's project scope;
 - Team Member positive owned-work/evidence journey within `F5`;
+- linked/authorised Project Manager preparation of one Team Member-owned governed commitment in `F5`;
 - named decision or baseline approval by a different authorised person;
 - downstream report and audit projection after a governed state transition.
 
