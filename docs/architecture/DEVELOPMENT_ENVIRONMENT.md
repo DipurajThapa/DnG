@@ -1,34 +1,33 @@
 # Goliath Development Environment
 
-**Status:** Active development baseline  
+**Status:** Active, fail-closed development baseline
 **Date:** 12 September 2026  
 **Purpose:** Continue Goliath development without relying on Vercel until a cohesive release candidate is ready.
 
-## Branches
+## Source and environment boundaries
 
-- GitHub development branch: `develop/goliath`
-- Current acceptance feature branch: `develop/goliath-multi-user-acceptance`
-- Stable/release branch: `main`
+- Canonical Git branch: `main`
 - Neon development branch: `goliath-development`
 - Neon development branch id: `br-cool-field-aupbzqgf`
 - Parent data branch: `goliath-web-integration` (`br-lively-morning-au7ns3pe`)
 
-`main` and the current production URL are not the active development workspace.
+The deleted development branches are no longer part of the workflow. `main` is the single source branch, but the named-user candidate remains connected only to the isolated development database and approved local browser origins.
 
 ## Deployment rule
 
-Normal development must not depend on Vercel. The development branch carries Vercel ignore rules so non-main work is skipped by the deployment build path. Vercel is a release-candidate gate, not an inner-loop development tool.
+Normal development must not depend on Vercel. Automatic Vercel deployment for `apps/goliath` is disabled while the application carries development runtime configuration. Vercel is a release-candidate gate, not an inner-loop development tool.
 
 Development sequence:
 
-1. design/requirement change on `develop/goliath`;
+1. design/requirement change on `main` through a reviewed change;
 2. schema/API work on `goliath-development`;
 3. local/static browser run where required;
 4. unit, integration, negative/security and regression checks;
 5. requirement and deviation traceability update;
 6. only when a cohesive release candidate exists, prepare hosted acceptance;
-7. deploy once for final browser/network/auth callback acceptance;
-8. merge/cut over only after acceptance passes.
+7. introduce an explicit release runtime configuration and enable one hosted candidate;
+8. deploy for final browser/network/auth callback acceptance;
+9. promote/cut over only after acceptance passes.
 
 ## Local browser origin
 
@@ -38,6 +37,8 @@ The development Neon branch is configured to accept:
 - `http://127.0.0.1:3000`
 
 for development authentication and Data API calls.
+
+The frontend validates its origin before starting authentication. Any unrecognised or hosted origin receives a fail-closed release-candidate message and cannot start the named-user session.
 
 The production branch remains separately restricted to the canonical production origin.
 

@@ -12,6 +12,7 @@ const invitations=read('apps/goliath/invitation-ui.js');
 const capabilities=read('apps/goliath/capability-ui.js');
 const policyUi=read('apps/goliath/policy-ui.js');
 const index=read('apps/goliath/index.html');
+const runtimeConfig=read('apps/goliath/runtime-config.js');
 const vercel=read('apps/goliath/vercel.json');
 const ci=read('.github/workflows/goliath-development-ci.yml');
 const baselineImmutability=read('apps/goliath/migrations/20260912_baseline_immutability_hardening.sql');
@@ -121,6 +122,16 @@ contains(vercel,[
   'mutation-observer-guard\\\\.js'
 ],'deployable asset routing');
 
+contains(runtimeConfig,[
+  "environment: 'development'",
+  "deploymentMode: 'local-only'",
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'originAllowed',
+  'ep-ancient-night-au3h4qqm'
+],'development runtime boundary');
+assert(!runtimeConfig.includes('ep-twilight-unit-au4iuyze'),'development runtime must not reference the production backend');
+
 contains(roleCatalog,['platform_identity.role_catalog','Enterprise Admin','Portfolio Manager','Program Manager','Project Director','Project Manager','PMO / Project Controls','Resource Manager','Delivery Lead','Agile Delivery Lead','Team Member','Sponsor','admin_role_coverage','not an acting-as control'],'role catalog');
 contains(reconciliation,['integration_reconciliation_issues_v2','integration_reconciliation_queue','create_reconciliation_issue','respond_reconciliation_issue','evidence_gap_diagnostics'],'reconciliation/evidence diagnostics');
 contains(acceptanceReadiness,['acceptance_readiness','named-user-auth','role-coverage','second-identity','separate-approver','control-established','evidence-specification','initial-baseline','critical-reconciliation',"'releaseReady',false"],'acceptance readiness');
@@ -135,8 +146,18 @@ contains(finalMutation,['share-invitation','reconcile-exception','admin-effort-s
 contains(devRoleSeed,['DEVELOPMENT-ONLY','GDEV-DL-AISHA','GDEV-AGILE','GDEV-TM-KHALID'],'development role seed');
 contains(baselineImmutability,['trg_pc_baselines_no_update','trg_pc_baselines_no_delete','edapos_reject_mutation_on_append_only'],'baseline immutability');
 contains(legacyLockdown,['goliath_api.list_contexts()','goliath_api.workspace(text)','goliath_api.append_context_event','goliath_api.append_project_event','goliath_api.require_context(text)','goliath_api.context_allows_project(text,text)'],'legacy public RPC lockdown');
-contains(vercel,['deploymentEnabled','develop/goliath'],'deployment isolation');
-contains(ci,['node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','node --check apps/goliath/role-model-ui.js','node --check apps/goliath/diagnostics-ui.js','node --check apps/goliath/invitation-ui.js','node --check apps/goliath/capability-ui.js','node --check apps/goliath/policy-ui.js','role_action_capability_matrix','authorization_self_test','remaining_action_policy','final_mutation_policy'],'CI governance checks');
+contains(vercel,['deploymentEnabled','"main":false','ep-ancient-night-au3h4qqm'],'deployment isolation');
+assert(!vercel.includes('ep-twilight-unit-au4iuyze'),'development CSP must not allow the production backend');
+contains(ci,['branches:','- main','workflow_dispatch','packages/goliath-core/**','npm ci --ignore-scripts','npm test','node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','node --check apps/goliath/role-model-ui.js','node --check apps/goliath/diagnostics-ui.js','node --check apps/goliath/invitation-ui.js','node --check apps/goliath/capability-ui.js','node --check apps/goliath/policy-ui.js','role_action_capability_matrix','authorization_self_test','remaining_action_policy','final_mutation_policy'],'CI governance checks');
+
+for(const required of [
+  'packages/goliath-core/package.json',
+  'packages/goliath-core/tsconfig.json',
+  'packages/goliath-core/src/index.ts',
+  'packages/goliath-core/tests/user-directory-ui.test.ts',
+  'packages/goliath-core/migrations/postgres/0001_goliath_canonical.sql',
+  'packages/goliath-core/scripts/production-config-check.mjs'
+])assert(fs.existsSync(path.join(root,required)),`validated core import missing ${required}`);
 
 const migrationFiles=[
   '20260912_commitment_evidence_foundation.sql',

@@ -1,16 +1,23 @@
-name: Goliath Development CI
+name: Goliath CI
 
 on:
   push:
     branches:
-      - develop/goliath
+      - main
+    paths:
+      - 'apps/goliath/**'
+      - 'packages/goliath-core/**'
+      - 'docs/architecture/**'
+      - '.github/workflows/goliath-development-ci.yml'
   pull_request:
     branches:
       - main
     paths:
       - 'apps/goliath/**'
+      - 'packages/goliath-core/**'
       - 'docs/architecture/**'
       - '.github/workflows/goliath-development-ci.yml'
+  workflow_dispatch:
 
 jobs:
   static-validation:
@@ -36,14 +43,21 @@ jobs:
           node --check apps/goliath/policy-ui.js
           node --check apps/goliath/runtime-config.js
           node --check apps/goliath/tests/development-contract-check.mjs
+          node --check apps/goliath/tests/runtime-boundary-check.mjs
 
-      - name: Validate development runtime boundary
+      - name: Validate fail-closed development runtime boundary
         shell: bash
         run: |
           grep -q "environment: 'development'" apps/goliath/runtime-config.js
+          grep -q "deploymentMode: 'local-only'" apps/goliath/runtime-config.js
+          grep -q "originAllowed" apps/goliath/runtime-config.js
           grep -q "ep-ancient-night-au3h4qqm" apps/goliath/runtime-config.js
-          grep -q 'deploymentEnabled' apps/goliath/vercel.json
-          grep -q 'develop/goliath' apps/goliath/vercel.json
+          grep -q 'ep-ancient-night-au3h4qqm' apps/goliath/vercel.json
+          grep -q '"main":false' apps/goliath/vercel.json
+          if grep -q 'ep-twilight-unit-au4iuyze' apps/goliath/vercel.json; then
+            echo 'Development candidate must not connect to the production database.' >&2
+            exit 1
+          fi
 
       - name: Validate product direction guardrails
         shell: bash
@@ -146,4 +160,27 @@ jobs:
           grep -q "identity.acceptance.probed" apps/goliath/migrations/20260912_multi_user_acceptance_probe.sql
 
       - name: Run integrated development contract checks
-        run: node apps/goliath/tests/development-contract-check.mjs
+        run: |
+          node apps/goliath/tests/development-contract-check.mjs
+          node apps/goliath/tests/runtime-boundary-check.mjs
+
+  validated-core-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: packages/goliath-core/package-lock.json
+
+      - name: Install validated core dependencies
+        working-directory: packages/goliath-core
+        run: npm ci --ignore-scripts
+
+      - name: Reproduce validated core regression
+        working-directory: packages/goliath-core
+        run: npm test

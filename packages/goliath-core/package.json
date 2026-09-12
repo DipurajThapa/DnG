@@ -1,0 +1,31 @@
+{
+  "name": "goliath-ai-first-control-refactor",
+  "version": "9.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "npm run build && node --test dist/tests/*.test.js",
+    "audit": "npm run build && node --test --experimental-test-coverage dist/tests/*.test.js",
+    "check": "npm run test",
+    "phase1:check": "npm run build && node --test dist/tests/phase1-baseline.test.js",
+    "phase2:check": "npm run build && node --test dist/tests/phase2-context.test.js",
+    "phase3:check": "npm run build && node --test dist/tests/phase3-*.test.js",
+    "phase4:check": "npm run build && node --test dist/tests/phase4-*.test.js",
+    "phase5:check": "npm run build && node --test dist/tests/phase5-*.test.js",
+    "phase5:demo": "npm run build && node scripts/phase5-demo.mjs",
+    "phase6:check": "npm run build && node --test dist/tests/phase6-*.test.js",
+    "phase7:check": "npm run build && node --test dist/tests/phase7-*.test.js",
+    "phase8:check": "npm run build && node --test dist/tests/phase8-*.test.js",
+    "production:check": "npm run build && node --test dist/tests/production-binding-closure.test.js",
+    "production:validate-config": "npm run build && node scripts/production-config-check.mjs",
+    "postgres:check": "npm run build && node --test dist/tests/postgres-runtime-persistence.test.js",
+    "postgres:smoke": "npm run build && node scripts/postgres-runtime-smoke.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "pg-native": "^3.9.0"
+  }
+}

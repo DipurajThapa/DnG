@@ -1,10 +1,10 @@
 # Goliath Development Acceptance — 12 September 2026
 
-**Implementation branch:** `develop/goliath-multi-user-acceptance`
+**Implementation branch:** `main` (single retained branch)
 **Development database:** Neon `goliath-development` (`br-cool-field-aupbzqgf`)  
 **Production deployment touched:** No  
-**Main code baseline:** merged previously; current multi-user acceptance work remains outside `main` until validated
-**Vercel required:** No
+**Main code baseline:** governance, scoped access and multi-user acceptance work merged
+**Hosted candidate enabled:** No; `apps/goliath` is fail-closed and automatic deployment is disabled
 
 ## Decision
 
@@ -15,6 +15,17 @@
 **Production release decision: NOT READY**
 
 This record covers the off-Vercel development environment only. It must not be used as evidence that a hosted production OAuth/browser journey has passed acceptance.
+
+## Source reproducibility
+
+PASS:
+
+- the original source archive SHA-256 matches `ffee2a356c64635d19189a46e4dbb292b484cd1f7e5d05679e9b28ff46235e92`;
+- source, tests, migrations and scripts are present under `packages/goliath-core`;
+- TypeScript builds from the Git working tree;
+- the complete regression was rerun from that directory: **236 tests, 236 passed, 0 failed**.
+
+This closes the repository reproducibility gap. It does not close browser, database-binding or real-user acceptance for the newer Neon web candidate.
 
 ## Product-direction acceptance
 
@@ -84,13 +95,14 @@ The UI now distinguishes:
 
 No arbitrary production-style role impersonation has been reintroduced.
 
-## Development CI
+## Main-branch CI
 
-The off-Vercel development workflow validates:
+The workflow now runs for relevant pushes and pull requests to `main`, and may be run manually. It validates:
 
 - JavaScript syntax for core, governance, PMO-control and role-model UI modules;
-- isolated development runtime configuration;
-- Vercel deployment-disabled boundary for `develop/goliath`;
+- local-only development runtime configuration and approved origins;
+- development CSP/backend alignment;
+- automatic Vercel deployment disabled for `main` while the candidate is not release-ready;
 - product-direction guardrails;
 - required migration set;
 - governance UI action contracts;
@@ -99,7 +111,8 @@ The off-Vercel development workflow validates:
 - legacy anonymous/public RPC lockdown;
 - canonical role catalog and development role-coverage seed;
 - integrated development contract checks;
-- multi-user acceptance RPC/UI contracts and deployable JavaScript asset routing.
+- multi-user acceptance RPC/UI contracts and deployable JavaScript asset routing;
+- installation, TypeScript build and all 236 validated-core regression tests.
 
 ## Database invariants
 
@@ -255,7 +268,8 @@ Before a hosted release candidate:
 4. verify audit events and downstream report projections after each material state transition;
 5. verify logout/login continuity;
 6. run regression and security checks again;
-7. then create one cohesive hosted release candidate for final OAuth/network/browser acceptance.
+7. introduce an explicit hosted release runtime rather than promoting the development configuration;
+8. create one cohesive hosted release candidate for final OAuth/network/browser acceptance.
 
 ## Next allowed development scope
 

@@ -14,7 +14,7 @@ A development-core archive containing `src/`, `tests/`, `migrations/`, `scripts/
 - `goliath_validated_core_20260911.tar.gz`
 - SHA-256: `fe8b0232b082c2dfeb17269fdfe5b52af984b35569779536d73fd66867bdf768`
 
-The complete original source archive is retained in the project artifact library while the canonical source tree is progressively imported under this repository.
+The archive SHA-256 was reverified on 12 September 2026. Its source, tests, migrations and scripts are now imported under `packages/goliath-core`.
 
 ## Fresh regression rerun — 12 September 2026
 
@@ -34,7 +34,7 @@ Result:
 - Skipped: **0**
 - Todo: **0**
 
-The rerun includes the final user-directory tests:
+The regression was reproduced again from `packages/goliath-core` after the import. It includes the final user-directory tests:
 
 1. Enterprise Admin receives the complete organisation user directory, including roster-only users — PASS.
 2. Non-admin roles cannot retrieve the organisation user directory — PASS.
@@ -45,3 +45,5 @@ The rerun includes the final user-directory tests:
 The hosted named-user implementation must preserve these domain invariants and role boundaries. A passing Vercel deployment is not allowed to redefine product truth, role authority, project workflow or data ownership simply because the hosting architecture changed.
 
 Any new GitHub/Vercel/Neon workflow is accepted only when it either delegates to the validated behavior or proves equivalent behavior through explicit regression and denial tests.
+
+The validated core is a regression and domain baseline. It does not by itself prove the newer Neon browser candidate, real-user identity binding or hosted production configuration.

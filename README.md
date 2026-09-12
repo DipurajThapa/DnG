@@ -18,7 +18,7 @@ They share one engineering platform but remain independently deployable and inde
 
 Read `docs/architecture/NORTH_STAR.md` before changing product boundaries, data ownership, identity, authorization or workflow behavior.
 
-The temporary simplified Goliath Vercel UI is an acceptance bridge. The previously validated full Goliath application remains the functional baseline that must be restored into the consolidated platform.
+The temporary simplified Goliath Vercel UI is an acceptance bridge. The previously validated full Goliath source and its 236-test regression are now restored under `packages/goliath-core`; the Neon named-user candidate remains under acceptance.
 
 ## Repository direction
 
@@ -43,3 +43,5 @@ docs/
 ```
 
 Migration is controlled: replacement paths must pass affected end-to-end acceptance before legacy paths are retired.
+
+Current release posture: the canonical hosted bridge remains the rollback/reference surface. The write-enabled named-user candidate is local-development only until cross-role, governed-workflow and hosted network/OAuth acceptance pass.

@@ -2,6 +2,8 @@
 
 Release date: 12 September 2026
 
+> **Current status update:** This file records the earlier anonymous/read-only bridge validation. It is not approval for the newer write-enabled named-user candidate. That candidate is local-development only and remains subject to `docs/architecture/DEVELOPMENT_ACCEPTANCE_2026-09-12.md`.
+
 ## Deployment
 
 - Production URL: https://goliath-project-management-tracker.vercel.app/
