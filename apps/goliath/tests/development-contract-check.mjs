@@ -7,18 +7,20 @@ const app=read('apps/goliath/app.js');
 const gov=read('apps/goliath/governance-ui.js');
 const pmo=read('apps/goliath/pmo-controls-ui.js');
 const roles=read('apps/goliath/role-model-ui.js');
+const diagnostics=read('apps/goliath/diagnostics-ui.js');
 const index=read('apps/goliath/index.html');
 const vercel=read('apps/goliath/vercel.json');
 const ci=read('.github/workflows/goliath-development-ci.yml');
 const baselineImmutability=read('apps/goliath/migrations/20260912_baseline_immutability_hardening.sql');
 const legacyLockdown=read('apps/goliath/migrations/20260912_legacy_public_rpc_lockdown.sql');
 const roleCatalog=read('apps/goliath/migrations/20260912_role_catalog_admin_coverage.sql');
+const reconciliation=read('apps/goliath/migrations/20260912_reconciliation_evidence_diagnostics.sql');
 const devRoleSeed=read('apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql');
 
 function assert(condition,message){if(!condition)throw new Error(message);}
 function contains(text,values,label){for(const v of values)assert(text.includes(v),`${label}: missing ${v}`);}
 
-contains(index,['Project Control & Decision Intelligence','/app.js','/governance-ui.js','/pmo-controls-ui.js','/role-model-ui.js'],'index');
+contains(index,['Project Control & Decision Intelligence','/app.js','/governance-ui.js','/pmo-controls-ui.js','/role-model-ui.js','/diagnostics-ui.js'],'index');
 assert(!index.includes('Project Management Tracker'),'legacy tracker branding must not return');
 assert(!app.includes('Project Management Tracker'),'legacy tracker branding must not return in app');
 
@@ -69,8 +71,17 @@ contains(roles,[
   'My responsibilities',
   'admin_role_coverage',
   'Only responsibilities assigned to your verified identity appear here',
-  'Do not grant your own login every role just to preview screens'
+  'Do not grant your own login every role just to preview screens',
+  'goliathInviteRoleHolder'
 ],'role model UI');
+
+contains(diagnostics,[
+  'integration_reconciliation_queue',
+  'evidence_gap_diagnostics',
+  'does not silently discard ambiguous records',
+  'Register exception',
+  'Evidence coverage diagnostics'
+],'diagnostics UI');
 
 contains(roleCatalog,[
   'platform_identity.role_catalog',
@@ -88,6 +99,15 @@ contains(roleCatalog,[
   'admin_role_coverage',
   'not an acting-as control'
 ],'role catalog');
+
+contains(reconciliation,[
+  'integration_reconciliation_issues_v2',
+  'integration_reconciliation_queue',
+  'create_reconciliation_issue',
+  'respond_reconciliation_issue',
+  'evidence_gap_diagnostics',
+  'Restricted evidence is counted but not exposed'
+],'reconciliation/evidence diagnostics');
 
 contains(devRoleSeed,[
   'DEVELOPMENT-ONLY',
@@ -112,7 +132,7 @@ contains(legacyLockdown,[
 ],'legacy public RPC lockdown');
 
 contains(vercel,['deploymentEnabled','develop/goliath'],'deployment isolation');
-contains(ci,['node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','node --check apps/goliath/role-model-ui.js','governance_authorization_hardening','baseline_immutability_hardening','integration_health_outcome_metrics','legacy_public_rpc_lockdown','role_catalog_admin_coverage'],'CI governance checks');
+contains(ci,['node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','node --check apps/goliath/role-model-ui.js','node --check apps/goliath/diagnostics-ui.js','governance_authorization_hardening','baseline_immutability_hardening','integration_health_outcome_metrics','legacy_public_rpc_lockdown','role_catalog_admin_coverage','reconciliation_evidence_diagnostics'],'CI governance checks');
 
 const migrationFiles=[
   '20260912_commitment_evidence_foundation.sql',
@@ -130,7 +150,8 @@ const migrationFiles=[
   '20260912_baseline_immutability_hardening.sql',
   '20260912_integration_health_outcome_metrics.sql',
   '20260912_legacy_public_rpc_lockdown.sql',
-  '20260912_role_catalog_admin_coverage.sql'
+  '20260912_role_catalog_admin_coverage.sql',
+  '20260912_reconciliation_evidence_diagnostics.sql'
 ];
 for(const f of migrationFiles)assert(fs.existsSync(path.join(root,'apps/goliath/migrations',f)),`missing migration ${f}`);
 assert(fs.existsSync(path.join(root,'apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql')),'missing development role-coverage seed');
