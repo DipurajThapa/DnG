@@ -1,18 +1,45 @@
-# Goliath Project Management Tracker
+# David + Goliath Platform
 
-This repository is the Git-backed deployment source for **Goliath**, the renamed Project Management Tracker.
+This repository is the consolidation point for **David** and **Goliath**.
 
-- Production URL: https://goliath-project-management-tracker.vercel.app/
-- Vercel project: `goliath-project-management-tracker`
-- Production branch: `main`
-- Validated source baseline: 236/236 automated tests PASS; TypeScript build PASS.
+## Canonical products
 
-## Repository layout
+- **David** — public website and customer/commercial lifecycle.
+- **Goliath** — governed project-control application.
 
-- `index.html` — stable same-origin Goliath entry shell.
-- `app.html` — direct-render validated browser review surface.
-- `goliath-head.png` — approved image-only Goliath head used for the product icon/favicon.
-- `RELEASE_VALIDATION.md` — release/validation evidence and runtime boundary.
-- `DAVID_LINK_UPDATE_REQUIRED.md` — exact David website handoff patch and current source-access blocker.
+They share one engineering platform but remain independently deployable and independently authorised applications.
 
-The full production-capable source baseline uses a dedicated Node/PostgreSQL runtime. This Vercel project intentionally hosts the browser review surface only; it does not pretend the production database/worker stack is running as a static site.
+## Production URLs
+
+- Goliath: https://goliath-project-management-tracker.vercel.app/
+- Legacy David rollback/reference: https://david.dippurajthapa.chatgpt.site/
+
+## Architecture authority
+
+Read `docs/architecture/NORTH_STAR.md` before changing product boundaries, data ownership, identity, authorization or workflow behavior.
+
+The temporary simplified Goliath Vercel UI is an acceptance bridge. The previously validated full Goliath application remains the functional baseline that must be restored into the consolidated platform.
+
+## Repository direction
+
+```text
+apps/
+  david/
+  goliath/
+packages/
+  goliath-core/
+  identity-contracts/
+  authorization/
+  audit/
+  shared-ui/
+db/
+  david/
+  identity/
+  goliath/
+docs/
+  architecture/
+  workflows/
+  acceptance/
+```
+
+Migration is controlled: replacement paths must pass affected end-to-end acceptance before legacy paths are retired.
