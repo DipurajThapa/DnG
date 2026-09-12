@@ -43,6 +43,8 @@ jobs:
           grep -q 'Project Control & Decision Intelligence' apps/goliath/index.html
           grep -q 'Commitment + Evidence + Decision Intelligence' docs/architecture/DEVELOPMENT_ENVIRONMENT.md
           grep -q 'Activities become execution evidence' docs/architecture/CURRENT_VS_TARGET_GAP_MATRIX_2026-09-12.md
+          grep -q 'No separate status dataset' apps/goliath/app.js
+          grep -q 'No actual cost, margin or EAC' apps/goliath/app.js
 
       - name: Validate migration set is present
         shell: bash
@@ -52,3 +54,7 @@ jobs:
           test -f apps/goliath/migrations/20260912_decision_dependency_semantics.sql
           test -f apps/goliath/migrations/20260912_mvp_health_foundation.sql
           test -f apps/goliath/migrations/20260912_mvp_read_model.sql
+          test -f apps/goliath/migrations/20260912_reporting_projection_foundation.sql
+          test -f apps/goliath/migrations/20260912_notification_escalation_foundation.sql
+          test -f apps/goliath/migrations/20260912_capacity_planned_cost_foundation.sql
+          test -f apps/goliath/migrations/20260912_reporting_notification_read_model.sql
