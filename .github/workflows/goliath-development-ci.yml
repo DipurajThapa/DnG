@@ -74,6 +74,7 @@ jobs:
           test -f apps/goliath/migrations/20260912_initial_baseline_approval_index_fix.sql
           test -f apps/goliath/migrations/20260912_control_surfaces_extension.sql
           test -f apps/goliath/migrations/20260912_governance_authorization_hardening.sql
+          test -f apps/goliath/migrations/20260912_baseline_immutability_hardening.sql
 
       - name: Validate governance surfaces have no silent bypass
         shell: bash
@@ -83,6 +84,8 @@ jobs:
           grep -q "convert_raid_trigger_to_issue" apps/goliath/governance-ui.js
           grep -q "link_requirement" apps/goliath/governance-ui.js
           grep -q "Open decision queue" apps/goliath/governance-ui.js
+          grep -q "trg_pc_baselines_no_update" apps/goliath/migrations/20260912_baseline_immutability_hardening.sql
+          grep -q "trg_pc_baselines_no_delete" apps/goliath/migrations/20260912_baseline_immutability_hardening.sql
 
       - name: Run integrated development contract checks
         run: node apps/goliath/tests/development-contract-check.mjs
