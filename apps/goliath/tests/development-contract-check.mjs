@@ -105,8 +105,7 @@ contains(reconciliation,[
   'integration_reconciliation_queue',
   'create_reconciliation_issue',
   'respond_reconciliation_issue',
-  'evidence_gap_diagnostics',
-  'Restricted evidence is counted but not exposed'
+  'evidence_gap_diagnostics'
 ],'reconciliation/evidence diagnostics');
 
 contains(devRoleSeed,[
