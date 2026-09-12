@@ -8,6 +8,7 @@ const gov=read('apps/goliath/governance-ui.js');
 const index=read('apps/goliath/index.html');
 const vercel=read('apps/goliath/vercel.json');
 const ci=read('.github/workflows/goliath-development-ci.yml');
+const baselineImmutability=read('apps/goliath/migrations/20260912_baseline_immutability_hardening.sql');
 
 function assert(condition,message){if(!condition)throw new Error(message);}
 function contains(text,values,label){for(const v of values)assert(text.includes(v),`${label}: missing ${v}`);}
@@ -46,8 +47,14 @@ contains(gov,[
   'Approved baselines are immutable snapshots'
 ],'governance UI');
 
+contains(baselineImmutability,[
+  'trg_pc_baselines_no_update',
+  'trg_pc_baselines_no_delete',
+  'edapos_reject_mutation_on_append_only'
+],'baseline immutability');
+
 contains(vercel,['deploymentEnabled','develop/goliath'],'deployment isolation');
-contains(ci,['node --check apps/goliath/governance-ui.js','governance_authorization_hardening'],'CI governance checks');
+contains(ci,['node --check apps/goliath/governance-ui.js','governance_authorization_hardening','baseline_immutability_hardening'],'CI governance checks');
 
 const migrationFiles=[
   '20260912_commitment_evidence_foundation.sql',
@@ -61,7 +68,8 @@ const migrationFiles=[
   '20260912_baseline_change_control_foundation.sql',
   '20260912_requirements_traceability_foundation.sql',
   '20260912_initial_baseline_approval.sql',
-  '20260912_governance_authorization_hardening.sql'
+  '20260912_governance_authorization_hardening.sql',
+  '20260912_baseline_immutability_hardening.sql'
 ];
 for(const f of migrationFiles)assert(fs.existsSync(path.join(root,'apps/goliath/migrations',f)),`missing migration ${f}`);
 
