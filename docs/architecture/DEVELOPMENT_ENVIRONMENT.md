@@ -7,6 +7,7 @@
 ## Branches
 
 - GitHub development branch: `develop/goliath`
+- Current acceptance feature branch: `develop/goliath-multi-user-acceptance`
 - Stable/release branch: `main`
 - Neon development branch: `goliath-development`
 - Neon development branch id: `br-cool-field-aupbzqgf`

@@ -18,6 +18,7 @@ const roleCatalog=read('apps/goliath/migrations/20260912_role_catalog_admin_cove
 const reconciliation=read('apps/goliath/migrations/20260912_reconciliation_evidence_diagnostics.sql');
 const acceptanceReadiness=read('apps/goliath/migrations/20260912_acceptance_readiness.sql');
 const invitationFlow=read('apps/goliath/migrations/20260912_invitation_flow_v2.sql');
+const multiUserAcceptance=read('apps/goliath/migrations/20260912_multi_user_acceptance_probe.sql');
 const devRoleSeed=read('apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql');
 
 function assert(condition,message){if(!condition)throw new Error(message);}
@@ -98,6 +99,45 @@ contains(invitations,[
   'admin_create_identity_invitation',
   'admin_record_identity_invitation_share'
 ],'invitation UI');
+
+contains(app,[
+  'Run access check',
+  'run_role_acceptance_probe',
+  'Access checks passed and persisted.',
+  'Claim the invitation issued for your governed role and scope.'
+],'multi-user acceptance UI');
+
+contains(roles,[
+  'multi_user_acceptance_readiness',
+  'Real-user role acceptance',
+  'Next acceptance action',
+  'goliathReloadRoleCoverage'
+],'multi-user acceptance readiness UI');
+
+contains(multiUserAcceptance,[
+  'run_role_acceptance_probe',
+  'identity.acceptance.probed',
+  'identity-bound',
+  'required-surface',
+  'scope-isolation',
+  'admin-boundary',
+  'cockpit-boundary',
+  'audit-persistence',
+  'multi_user_acceptance_readiness',
+  'sponsor-probe',
+  'team-probe',
+  'access is intentionally not widened'
+],'multi-user acceptance backend');
+
+contains(vercel,[
+  'governance-ui\\\\.js',
+  'pmo-controls-ui\\\\.js',
+  'role-model-ui\\\\.js',
+  'diagnostics-ui\\\\.js',
+  'invitation-ui\\\\.js',
+  'runtime-config\\\\.js',
+  'mutation-observer-guard\\\\.js'
+],'deployable asset routing');
 
 contains(roleCatalog,[
   'platform_identity.role_catalog',
@@ -190,7 +230,8 @@ const migrationFiles=[
   '20260912_role_catalog_admin_coverage.sql',
   '20260912_reconciliation_evidence_diagnostics.sql',
   '20260912_acceptance_readiness.sql',
-  '20260912_invitation_flow_v2.sql'
+  '20260912_invitation_flow_v2.sql',
+  '20260912_multi_user_acceptance_probe.sql'
 ];
 for(const f of migrationFiles)assert(fs.existsSync(path.join(root,'apps/goliath/migrations',f)),`missing migration ${f}`);
 assert(fs.existsSync(path.join(root,'apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql')),'missing development role-coverage seed');

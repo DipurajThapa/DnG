@@ -98,6 +98,7 @@ jobs:
           test -f apps/goliath/migrations/20260912_reconciliation_evidence_diagnostics.sql
           test -f apps/goliath/migrations/20260912_acceptance_readiness.sql
           test -f apps/goliath/migrations/20260912_invitation_flow_v2.sql
+          test -f apps/goliath/migrations/20260912_multi_user_acceptance_probe.sql
           test -f apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql
 
       - name: Validate governance surfaces have no silent bypass
@@ -127,6 +128,9 @@ jobs:
           grep -q "v_reused" apps/goliath/migrations/20260912_invitation_flow_v2.sql
           grep -q "admin_record_identity_invitation_share" apps/goliath/migrations/20260912_invitation_flow_v2.sql
           grep -q "does not close on blur" apps/goliath/invitation-ui.js
+          grep -q "run_role_acceptance_probe" apps/goliath/migrations/20260912_multi_user_acceptance_probe.sql
+          grep -q "multi_user_acceptance_readiness" apps/goliath/migrations/20260912_multi_user_acceptance_probe.sql
+          grep -q "identity.acceptance.probed" apps/goliath/migrations/20260912_multi_user_acceptance_probe.sql
 
       - name: Run integrated development contract checks
         run: node apps/goliath/tests/development-contract-check.mjs

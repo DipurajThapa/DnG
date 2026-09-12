@@ -8,9 +8,9 @@ const roleLabels={
   'resource-manager':'Resource Manager','delivery-lead':'Delivery Lead','agile-delivery-lead':'Agile Delivery Lead',
   'team-member':'Team Member','sponsor':'Sponsor'
 };
-let loading=false,lastRoleModel=null,lastReadiness=null;
+let loading=false,lastRoleModel=null,lastReadiness=null,lastMultiUser=null;
 
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
 function arr(v){return Array.isArray(v)?v:[];}
 async function rpc(name,payload={}){const {data,error}=await client.rpc(name,payload);if(error)throw new Error(error.message||String(error));return data;}
 function badge(v){const s=String(v||'unknown');const cls=['ready','pass'].includes(s)?'good':['blocked','not-covering-project','unassigned'].includes(s)?'bad':'warn';return `<span class="badge ${cls}">${esc(s)}</span>`;}
@@ -52,19 +52,20 @@ async function loadCoverage(projectId=null){
     const projects=arr(ref?.projects);
     const remembered=sessionStorage.getItem('goliathRoleCoverageProject');
     const chosen=projectId&&projects.some(p=>p.id===projectId)?projectId:(remembered&&projects.some(p=>p.id===remembered)?remembered:(projects.find(p=>p.id==='GOLIATH-DEV')?.id||projects[0]?.id||null));
-    const [model,readiness]=await Promise.all([
+    const [model,readiness,multiUser]=await Promise.all([
       rpc('admin_role_coverage',{p_acting_assignment_id:ctx,p_project_id:chosen}),
-      rpc('acceptance_readiness',{p_assignment_id:ctx,p_project_id:chosen})
+      rpc('acceptance_readiness',{p_assignment_id:ctx,p_project_id:chosen}),
+      rpc('multi_user_acceptance_readiness',{p_assignment_id:ctx,p_project_id:chosen})
     ]);
-    lastRoleModel=model;lastReadiness=readiness;
-    renderCoverage(view,projects,model,readiness,chosen);
+    lastRoleModel=model;lastReadiness=readiness;lastMultiUser=multiUser;
+    renderCoverage(view,projects,model,readiness,multiUser,chosen);
   }catch(e){
     document.getElementById('roleCoveragePanel')?.remove();
     document.getElementById('acceptanceReadinessPanel')?.remove();
   }finally{loading=false;}
 }
 
-function renderCoverage(view,projects,model,readiness,chosen){
+function renderCoverage(view,projects,model,readiness,multiUser,chosen){
   document.getElementById('roleCoveragePanel')?.remove();
   document.getElementById('acceptanceReadinessPanel')?.remove();
   const panel=document.createElement('div');
@@ -93,12 +94,14 @@ function renderCoverage(view,projects,model,readiness,chosen){
   const readinessPanel=document.createElement('div');
   readinessPanel.id='acceptanceReadinessPanel';
   readinessPanel.className='panel';
-  const gates=arr(readiness?.gates),s=readiness?.summary||{};
+  const gates=arr(readiness?.gates),identityGates=arr(multiUser?.gates),s=readiness?.summary||{};
   const passed=gates.filter(g=>g.state==='pass').length;
   const blocked=gates.filter(g=>g.state==='blocked').length;
   readinessPanel.innerHTML=`<h3>Acceptance readiness</h3><p class="muted">Configuration is not treated as proof. These gates separate structural readiness from real named-user and governed-workflow acceptance.</p>
     <div class="grid"><div class="card"><span>Passed gates</span><strong>${passed}/${gates.length}</strong></div><div class="card"><span>Blocked gates</span><strong>${blocked}</strong></div><div class="card"><span>Real linked identities</span><strong>${s.projectLinkedIdentities??0}</strong></div><div class="card"><span>Controlled commitments</span><strong>${s.controlledCommitments??0}</strong></div></div>
     <div style="margin-top:14px">${gates.map(g=>`<div class="timeline"><div><b>${esc(g.label)}</b><div class="muted">${esc(g.reason)}</div></div>${badge(g.state)}</div>`).join('')}</div>
+    <h3 style="margin-top:20px">Real-user role acceptance</h3><div>${identityGates.map(g=>`<div class="timeline"><div><b>${esc(g.label)}</b><div class="muted">${esc(g.reason)}</div></div>${badge(g.state)}</div>`).join('')}</div>
+    <div class="notice" style="margin-top:14px"><b>Next acceptance action:</b> ${esc(multiUser?.nextAction||'Run the role checks from each invited account.')}</div>
     <div class="notice" style="margin-top:14px"><b>Release status:</b> ${readiness?.releaseReady?'ready':'not ready'}<br>${esc(readiness?.releaseReadyReason||'Additional release acceptance is required.')}</div>`;
 
   const firstTable=view.querySelector('.panel.table-wrap');
@@ -137,4 +140,4 @@ function attach(){
 
 new MutationObserver(attach).observe(document.documentElement,{childList:true,subtree:true});
 attach();
-Object.assign(window,{goliathInviteRoleHolder:inviteRoleHolder});
+Object.assign(window,{goliathInviteRoleHolder:inviteRoleHolder,goliathReloadRoleCoverage:()=>loadCoverage(lastRoleModel?.project?.id||null)});
