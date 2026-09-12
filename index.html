@@ -14,8 +14,8 @@
 <main class="main"><header class="top"><div><b id="scopeTitle">Goliath Control</b><div class="status" id="connection">Connecting to API…</div></div><div class="context"><span class="muted">Acting as</span><select id="contextSelect" aria-label="Acting context"></select></div></header><div class="content"><div id="error"></div><div id="view"></div></div></main>
 </div>
 <script type="module">
-import { createClient } from 'https://esm.sh/@neondatabase/neon-js@latest';
-const client=createClient('https://ep-twilight-unit-au4iuyze.c-10.us-east-1.aws.neon.tech/edapos',{auth:{allowAnonymous:true}});
+import { createClient } from 'https://esm.sh/@neondatabase/neon-js@0.7.0-beta';
+const client=createClient({auth:{url:'https://ep-twilight-unit-au4iuyze.neonauth.c-10.us-east-1.aws.neon.tech/edapos/auth',allowAnonymous:true},dataApi:{url:'https://ep-twilight-unit-au4iuyze.apirest.c-10.us-east-1.aws.neon.tech/edapos/rest/v1'}});
 let contexts=[],workspace=null,current='attention';
 const labels={attention:'Attention',projects:'Projects',work:'Work',people:'People & capacity',money:'Money',admin:'Administration'};
 function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
