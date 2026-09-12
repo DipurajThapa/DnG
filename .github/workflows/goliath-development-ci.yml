@@ -99,6 +99,7 @@ jobs:
           test -f apps/goliath/migrations/20260912_acceptance_readiness.sql
           test -f apps/goliath/migrations/20260912_invitation_flow_v2.sql
           test -f apps/goliath/migrations/20260912_multi_user_acceptance_probe.sql
+          test -f apps/goliath/migrations/20260912_governance_membership_team_access.sql
           test -f apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql
 
       - name: Validate governance surfaces have no silent bypass
