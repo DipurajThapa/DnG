@@ -71,7 +71,7 @@ jobs:
           grep -q 'capability-ui.js' apps/goliath/index.html
           grep -q 'policy-ui.js' apps/goliath/index.html
           grep -q 'Commitment + Evidence + Decision Intelligence' docs/architecture/DEVELOPMENT_ENVIRONMENT.md
-          grep -q 'Activities become execution evidence' docs/architecture/CURRENT_VS_TARGET_GAP_MATRIX_2026-09-12.md
+          grep -q 'Commitment as management root' docs/architecture/CURRENT_VS_TARGET_GAP_MATRIX_2026-09-12.md
           grep -q 'No separate status dataset' apps/goliath/app.js
           grep -q 'No actual cost, margin or EAC' apps/goliath/app.js
           grep -q 'Human-confirmed links count' apps/goliath/governance-ui.js
