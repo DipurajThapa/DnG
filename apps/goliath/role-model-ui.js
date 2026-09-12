@@ -8,12 +8,12 @@ const roleLabels={
   'resource-manager':'Resource Manager','delivery-lead':'Delivery Lead','agile-delivery-lead':'Agile Delivery Lead',
   'team-member':'Team Member','sponsor':'Sponsor'
 };
-let loading=false,lastRoleModel=null;
+let loading=false,lastRoleModel=null,lastReadiness=null;
 
-function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function esc(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));}
 function arr(v){return Array.isArray(v)?v:[];}
 async function rpc(name,payload={}){const {data,error}=await client.rpc(name,payload);if(error)throw new Error(error.message||String(error));return data;}
-function badge(v){const s=String(v||'unknown');const cls=s==='ready'?'good':s==='assigned-unlinked'?'warn':s==='not-covering-project'||s==='unassigned'?'bad':'warn';return `<span class="badge ${cls}">${esc(s)}</span>`;}
+function badge(v){const s=String(v||'unknown');const cls=['ready','pass'].includes(s)?'good':['blocked','not-covering-project','unassigned'].includes(s)?'bad':'warn';return `<span class="badge ${cls}">${esc(s)}</span>`;}
 
 function humaniseResponsibilityOptions(){
   const select=document.getElementById('contextSelect');
@@ -52,17 +52,21 @@ async function loadCoverage(projectId=null){
     const projects=arr(ref?.projects);
     const remembered=sessionStorage.getItem('goliathRoleCoverageProject');
     const chosen=projectId&&projects.some(p=>p.id===projectId)?projectId:(remembered&&projects.some(p=>p.id===remembered)?remembered:(projects.find(p=>p.id==='GOLIATH-DEV')?.id||projects[0]?.id||null));
-    const model=await rpc('admin_role_coverage',{p_acting_assignment_id:ctx,p_project_id:chosen});
-    lastRoleModel=model;
-    renderCoverage(view,projects,model,chosen);
+    const [model,readiness]=await Promise.all([
+      rpc('admin_role_coverage',{p_acting_assignment_id:ctx,p_project_id:chosen}),
+      rpc('acceptance_readiness',{p_assignment_id:ctx,p_project_id:chosen})
+    ]);
+    lastRoleModel=model;lastReadiness=readiness;
+    renderCoverage(view,projects,model,readiness,chosen);
   }catch(e){
-    const existing=document.getElementById('roleCoveragePanel');
-    if(existing)existing.remove();
+    document.getElementById('roleCoveragePanel')?.remove();
+    document.getElementById('acceptanceReadinessPanel')?.remove();
   }finally{loading=false;}
 }
 
-function renderCoverage(view,projects,model,chosen){
+function renderCoverage(view,projects,model,readiness,chosen){
   document.getElementById('roleCoveragePanel')?.remove();
+  document.getElementById('acceptanceReadinessPanel')?.remove();
   const panel=document.createElement('div');
   panel.id='roleCoveragePanel';
   panel.className='panel table-wrap';
@@ -84,9 +88,21 @@ function renderCoverage(view,projects,model,chosen){
     <table><thead><tr><th>Role</th><th>Default scope</th><th>Primary surfaces</th><th>Assignments</th><th>Covers project</th><th>Linked identities</th><th>Acceptance state</th><th></th></tr></thead>
       <tbody>${roles.map(r=>{const unlinked=arr(r.assignments).filter(a=>!a.identityLinked);return `<tr><td><b>${esc(r.displayName)}</b><div class="muted">${esc(r.purpose)}</div></td><td>${esc(r.defaultScopeType)}${r.requiresTeam?' · team required':''}</td><td>${esc(arr(r.surfaces).map(s=>String(s).replaceAll('-',' ')).join(', '))}</td><td>${r.activeAssignments??0}</td><td>${r.role==='enterprise-admin'?'admin only':(r.projectCoverage??0)}</td><td>${r.linkedIdentities??0}</td><td>${badge(r.status)}</td><td>${unlinked.length?`<button class="mini secondary" onclick="goliathInviteRoleHolder('${esc(r.role)}')">Invite role holder</button>`:'<span class="muted">Linked</span>'}</td></tr>`;}).join('')}</tbody>
     </table>
-    <div class="muted" style="margin-top:10px">A role can be configured for the project without having a linked sign-in identity yet. Use <b>Invite role holder</b> to bind a second real verified identity for end-to-end role testing. Do not grant your own login every role just to preview screens.</div>`;
+    <div class="muted" style="margin-top:10px">A role can cover a project without having a linked sign-in identity yet. Use <b>Invite role holder</b> for real multi-user acceptance. Do not grant your own login every role merely to preview screens.</div>`;
+
+  const readinessPanel=document.createElement('div');
+  readinessPanel.id='acceptanceReadinessPanel';
+  readinessPanel.className='panel';
+  const gates=arr(readiness?.gates),s=readiness?.summary||{};
+  const passed=gates.filter(g=>g.state==='pass').length;
+  const blocked=gates.filter(g=>g.state==='blocked').length;
+  readinessPanel.innerHTML=`<h3>Acceptance readiness</h3><p class="muted">Configuration is not treated as proof. These gates separate structural readiness from real named-user and governed-workflow acceptance.</p>
+    <div class="grid"><div class="card"><span>Passed gates</span><strong>${passed}/${gates.length}</strong></div><div class="card"><span>Blocked gates</span><strong>${blocked}</strong></div><div class="card"><span>Real linked identities</span><strong>${s.projectLinkedIdentities??0}</strong></div><div class="card"><span>Controlled commitments</span><strong>${s.controlledCommitments??0}</strong></div></div>
+    <div style="margin-top:14px">${gates.map(g=>`<div class="timeline"><div><b>${esc(g.label)}</b><div class="muted">${esc(g.reason)}</div></div>${badge(g.state)}</div>`).join('')}</div>
+    <div class="notice" style="margin-top:14px"><b>Release status:</b> ${readiness?.releaseReady?'ready':'not ready'}<br>${esc(readiness?.releaseReadyReason||'Additional release acceptance is required.')}</div>`;
+
   const firstTable=view.querySelector('.panel.table-wrap');
-  if(firstTable)firstTable.before(panel);else view.appendChild(panel);
+  if(firstTable){firstTable.before(readinessPanel);firstTable.before(panel);}else{view.appendChild(panel);view.appendChild(readinessPanel);}
   const select=panel.querySelector('#roleCoverageProject');
   select.onchange=()=>{sessionStorage.setItem('goliathRoleCoverageProject',select.value);loadCoverage(select.value);};
 }
@@ -95,27 +111,20 @@ async function inviteRoleHolder(roleKey){
   const ctx=document.getElementById('contextSelect')?.value;
   const role=arr(lastRoleModel?.roles).find(r=>r.role===roleKey);
   if(!ctx||!role)return;
-  const candidates=[];
-  const seen=new Set();
-  for(const a of arr(role.assignments)){
-    if(a.identityLinked||seen.has(a.userId))continue;
-    seen.add(a.userId);candidates.push(a);
-  }
+  const candidates=[];const seen=new Set();
+  for(const a of arr(role.assignments)){if(a.identityLinked||seen.has(a.userId))continue;seen.add(a.userId);candidates.push(a);}
   if(!candidates.length){alert('Every current holder of this role already has a linked identity.');return;}
   let chosen=candidates[0];
   if(candidates.length>1){
     const menu=candidates.map((a,i)=>`${i+1}. ${a.displayName} · ${a.scopeType} ${a.scopeId}${a.teamId?` · ${a.teamId}`:''}`).join('\n');
     const raw=prompt(`Choose the internal role holder to invite:\n\n${menu}\n\nEnter 1-${candidates.length}:`,'1');
     if(raw===null)return;
-    const n=Number(raw);
-    if(!Number.isInteger(n)||n<1||n>candidates.length){alert('Invalid selection.');return;}
-    chosen=candidates[n-1];
+    const n=Number(raw);if(!Number.isInteger(n)||n<1||n>candidates.length){alert('Invalid selection.');return;}chosen=candidates[n-1];
   }
-  const email=prompt(`Verified Google email for ${chosen.displayName} (${role.displayName}):`);
-  if(!email)return;
+  const email=prompt(`Verified Google email for ${chosen.displayName} (${role.displayName}):`);if(!email)return;
   try{
     const result=await rpc('admin_create_identity_invitation',{p_acting_assignment_id:ctx,p_email:email.trim(),p_user_id:chosen.userId,p_expires_hours:168});
-    alert(`Invitation created for ${result.email}.\n\nOne-time token:\n${result.token}\n\nThe recipient must sign in with that exact verified email, then claim this token if automatic linking does not occur.`);
+    alert(`Invitation created for ${result.email}.\n\nOne-time token:\n${result.token}\n\nThe recipient must sign in with that exact verified email and claim this token if automatic linking does not occur.`);
     await loadCoverage(lastRoleModel?.project?.id||null);
   }catch(e){alert(e.message);}
 }
