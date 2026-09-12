@@ -2,16 +2,18 @@
 
 **Branch:** `develop/goliath`  
 **Development database:** Neon `goliath-development` (`br-cool-field-aupbzqgf`)  
-**Production/main touched:** No  
+**Production deployment touched:** No  
+**Main code baseline:** merged previously; current role-coverage work remains on `develop/goliath` until validated  
 **Vercel required:** No
 
 ## Decision
 
 **Structural / contract acceptance: PASS**  
-**Named-user browser acceptance: BLOCKED pending first real development identity sign-in**  
-**Production release decision: NOT APPLICABLE / NOT READY**
+**First real named-user Google sign-in: PASS**  
+**Multi-user / cross-role browser acceptance: BLOCKED pending second verified identity**  
+**Production release decision: NOT READY**
 
-This record covers the off-Vercel development environment only. It must not be used as evidence that the production URL or final OAuth/browser journey has passed acceptance.
+This record covers the off-Vercel development environment only. It must not be used as evidence that a hosted production OAuth/browser journey has passed acceptance.
 
 ## Product-direction acceptance
 
@@ -24,20 +26,59 @@ PASS:
 - Familiar reports are projections of governed state rather than separate status datasets.
 - Missing finance/capacity/reporting data is represented as unavailable/data-insufficient; no unsupported actual cost, margin or EAC is fabricated.
 - Consequential baseline/change/RAID/decision actions retain named-human authority.
-- PMO Controls now focuses on connector health, evidence freshness, field ownership and outcome measurement rather than duplicate status production.
+- PMO Controls focuses on connector health, evidence freshness, field ownership and outcome measurement rather than duplicate status production.
+- The responsibility selector is identity-bound and is explicitly **not** an acting-as role switch.
+
+## Named-user acceptance
+
+PASS for the first real development identity:
+
+- Google OAuth completed on `http://localhost:3000`;
+- Neon Auth created a real verified Auth user;
+- the one-time bootstrap invitation for `admin1` was claimed;
+- `platform_identity.user_links` contains one active Auth → Goliath identity link;
+- the verified user resolves to the governed internal identity `admin1`;
+- the browser successfully displays the authenticated Goliath dashboard;
+- the signed-in identity resolves exactly two real responsibilities:
+  - Enterprise Admin — organisation `ORG1`;
+  - Project Manager — project `GOLIATH-DEV`.
+
+A frontend blank-screen issue observed immediately after OAuth was traced to self-triggering navigation `MutationObserver` callbacks and corrected through the observer-guard hotfix. The successful post-hotfix dashboard load is accepted as evidence that the first named-user browser shell is functional.
+
+## Role model / coverage
+
+The supported role model is now centralised in `platform_identity.role_catalog` rather than being defined only by scattered UI conditionals.
+
+Canonical supported roles:
+
+1. Enterprise Admin
+2. Portfolio Manager
+3. Program Manager
+4. Project Director
+5. Project Manager
+6. PMO / Project Controls
+7. Resource Manager
+8. Delivery Lead
+9. Agile Delivery Lead
+10. Team Member
+11. Sponsor
+
+For `GOLIATH-DEV`, all 11 roles now have at least one effective governed responsibility that covers the project through the appropriate project/program/portfolio/organisation/org-unit scope.
+
+Only Enterprise Admin and Project Manager currently have a linked real Auth identity. The remaining role holders are deliberately configured but unlinked pending second-user/multi-user acceptance.
+
+The UI now distinguishes:
+
+- **My responsibilities** — only responsibilities actually assigned to the signed-in identity;
+- **Role coverage** — Enterprise Admin visibility of all supported roles, scopes, project coverage and linked-identity readiness.
+
+No arbitrary production-style role impersonation has been reintroduced.
 
 ## Development CI
 
-Latest checked hardening CI:
+The off-Vercel development workflow validates:
 
-- Workflow: **Goliath Development CI**
-- Branch: `develop/goliath`
-- Commit: `815229fc56f341f683656c0b5f868a75de59b214`
-- Result: **SUCCESS**
-
-CI validates:
-
-- JavaScript syntax for the core, governance and PMO-control UI modules;
+- JavaScript syntax for core, governance, PMO-control and role-model UI modules;
 - isolated development runtime configuration;
 - Vercel deployment-disabled boundary for `develop/goliath`;
 - product-direction guardrails;
@@ -46,6 +87,7 @@ CI validates:
 - baseline immutability migration;
 - integration/outcome instrumentation contracts;
 - legacy anonymous/public RPC lockdown;
+- canonical role catalog and development role-coverage seed;
 - integrated development contract checks.
 
 ## Database invariants
@@ -75,8 +117,8 @@ PASS:
 - authorization helpers are internal implementation details rather than standalone browser APIs;
 - renamed internal governance implementations are not executable by browser/authenticated roles;
 - all authenticated exposed `goliath_api` functions checked use SECURITY DEFINER with a fixed search path;
-- governance wrappers enforce the identity/responsibility/data-class boundary and delegate to the existing scoped implementations;
-- unauthenticated development DB session resolves no Goliath user (`current_user_id() = null`).
+- governance wrappers enforce the identity/responsibility/data-class boundary;
+- unauthenticated development DB sessions resolve no Goliath user.
 
 ## Baseline immutability
 
@@ -149,48 +191,46 @@ The controlled `GOLIATH-DEV` brownfield source intentionally remains at the esta
 - approved baselines: 0;
 - change requests: 0.
 
-This is intentional. Development data has not been altered merely to manufacture a passing business workflow. Positive state transitions should occur through authenticated governed actions.
+This is intentional. Positive workflow state transitions should occur through authenticated governed actions rather than through database seeding merely to manufacture a passing business workflow.
 
-## Blocked acceptance
+## Remaining blocked acceptance
 
-### Real named-user authentication and browser journey — BLOCKED
+### Second identity / cross-role acceptance — BLOCKED
 
-Current isolated development Auth state:
+A second real verified identity is still required to prove separation between different people and responsibilities.
 
-- Neon Auth users: 0;
-- Goliath identity links: 0;
-- responsibility assignments exist, but none are bound to a real development Auth identity yet.
+Still unverified:
 
-Therefore the following remain unverified and must not be called passed:
+- Enterprise Admin invitation issued to a second real Google account;
+- second identity claim/link;
+- Sponsor/Delivery/PMO/etc. positive role journey under a distinct identity;
+- cross-user and cross-context denial using two real sessions;
+- named decision approval by a different person;
+- initial baseline approval with real separation of duties;
+- logout/login continuity for both identities.
 
-- Google sign-in on localhost;
-- first real identity link/bootstrap;
-- responsibility/context resolution from a real JWT;
-- positive browser UI → Auth → RPC → persistence journey;
-- second-user invitation claim;
-- cross-user/cross-context browser denial using real sessions;
-- logout/login continuity.
-
-No fake JWT, role bypass or fabricated auth user will be used to close this gate.
+No fake JWT, same-user self-impersonation, or fabricated Auth user will be used to close these gates.
 
 ## Remaining release gates
 
 Before a hosted release candidate:
 
-1. complete a real named-user local acceptance session;
-2. run at least two identities / distinct responsibilities and cross-context denial tests;
+1. invite and link a second real verified identity to one of the configured role holders;
+2. execute cross-role allow/deny checks using two real sessions;
 3. execute the full governed business chain on development data;
 4. verify audit events and downstream report projections after each material state transition;
-5. run regression and security checks again;
-6. then create one cohesive hosted release candidate for final OAuth/network/browser acceptance.
+5. verify logout/login continuity;
+6. run regression and security checks again;
+7. then create one cohesive hosted release candidate for final OAuth/network/browser acceptance.
 
 ## Next allowed development scope
 
-Structural acceptance is sufficient to continue with capabilities that do not depend on fabricating the blocked identity journey:
+Development may continue with:
 
+- role-targeted invitation UX and role-coverage diagnostics;
 - deeper connector reconciliation / ambiguity handling;
 - evidence-coverage diagnostics;
 - measurement capture needed for currently data-insufficient outcome metrics;
 - additional validation tooling.
 
-Do not merge to `main` or deploy to production solely because this development acceptance record exists.
+Do not call the release production-ready until multi-user separation-of-duties and the full governed workflow have passed with real identities.
