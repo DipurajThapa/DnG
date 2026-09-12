@@ -28,6 +28,7 @@ jobs:
         run: |
           node --check apps/goliath/app.js
           node --check apps/goliath/governance-ui.js
+          node --check apps/goliath/pmo-controls-ui.js
           node --check apps/goliath/runtime-config.js
           node --check apps/goliath/tests/development-contract-check.mjs
 
@@ -44,6 +45,7 @@ jobs:
         run: |
           grep -q 'Project Control & Decision Intelligence' apps/goliath/index.html
           grep -q 'governance-ui.js' apps/goliath/index.html
+          grep -q 'pmo-controls-ui.js' apps/goliath/index.html
           grep -q 'Commitment + Evidence + Decision Intelligence' docs/architecture/DEVELOPMENT_ENVIRONMENT.md
           grep -q 'Activities become execution evidence' docs/architecture/CURRENT_VS_TARGET_GAP_MATRIX_2026-09-12.md
           grep -q 'No separate status dataset' apps/goliath/app.js
@@ -51,6 +53,8 @@ jobs:
           grep -q 'Human-confirmed links count' apps/goliath/governance-ui.js
           grep -q 'Risk scoring is human-entered' apps/goliath/governance-ui.js
           grep -q 'Approved baselines are immutable snapshots' apps/goliath/governance-ui.js
+          grep -q 'Only evidence-supported measures are calculated' apps/goliath/pmo-controls-ui.js
+          grep -q 'Do not estimate a lower number' apps/goliath/pmo-controls-ui.js
 
       - name: Validate migration set is present
         shell: bash
@@ -75,6 +79,7 @@ jobs:
           test -f apps/goliath/migrations/20260912_control_surfaces_extension.sql
           test -f apps/goliath/migrations/20260912_governance_authorization_hardening.sql
           test -f apps/goliath/migrations/20260912_baseline_immutability_hardening.sql
+          test -f apps/goliath/migrations/20260912_integration_health_outcome_metrics.sql
 
       - name: Validate governance surfaces have no silent bypass
         shell: bash
@@ -86,6 +91,9 @@ jobs:
           grep -q "Open decision queue" apps/goliath/governance-ui.js
           grep -q "trg_pc_baselines_no_update" apps/goliath/migrations/20260912_baseline_immutability_hardening.sql
           grep -q "trg_pc_baselines_no_delete" apps/goliath/migrations/20260912_baseline_immutability_hardening.sql
+          grep -q "integration_health" apps/goliath/pmo-controls-ui.js
+          grep -q "outcome_metrics" apps/goliath/pmo-controls-ui.js
+          grep -q "record_admin_effort_sample" apps/goliath/pmo-controls-ui.js
 
       - name: Run integrated development contract checks
         run: node apps/goliath/tests/development-contract-check.mjs
