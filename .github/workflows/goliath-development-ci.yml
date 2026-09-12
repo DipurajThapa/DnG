@@ -29,6 +29,7 @@ jobs:
           node --check apps/goliath/app.js
           node --check apps/goliath/governance-ui.js
           node --check apps/goliath/runtime-config.js
+          node --check apps/goliath/tests/development-contract-check.mjs
 
       - name: Validate development runtime boundary
         shell: bash
@@ -72,6 +73,7 @@ jobs:
           test -f apps/goliath/migrations/20260912_initial_baseline_approval.sql
           test -f apps/goliath/migrations/20260912_initial_baseline_approval_index_fix.sql
           test -f apps/goliath/migrations/20260912_control_surfaces_extension.sql
+          test -f apps/goliath/migrations/20260912_governance_authorization_hardening.sql
 
       - name: Validate governance surfaces have no silent bypass
         shell: bash
@@ -81,3 +83,6 @@ jobs:
           grep -q "convert_raid_trigger_to_issue" apps/goliath/governance-ui.js
           grep -q "link_requirement" apps/goliath/governance-ui.js
           grep -q "Open decision queue" apps/goliath/governance-ui.js
+
+      - name: Run integrated development contract checks
+        run: node apps/goliath/tests/development-contract-check.mjs
