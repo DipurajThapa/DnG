@@ -8,6 +8,7 @@ const gov=read('apps/goliath/governance-ui.js');
 const pmo=read('apps/goliath/pmo-controls-ui.js');
 const roles=read('apps/goliath/role-model-ui.js');
 const diagnostics=read('apps/goliath/diagnostics-ui.js');
+const invitations=read('apps/goliath/invitation-ui.js');
 const index=read('apps/goliath/index.html');
 const vercel=read('apps/goliath/vercel.json');
 const ci=read('.github/workflows/goliath-development-ci.yml');
@@ -16,12 +17,13 @@ const legacyLockdown=read('apps/goliath/migrations/20260912_legacy_public_rpc_lo
 const roleCatalog=read('apps/goliath/migrations/20260912_role_catalog_admin_coverage.sql');
 const reconciliation=read('apps/goliath/migrations/20260912_reconciliation_evidence_diagnostics.sql');
 const acceptanceReadiness=read('apps/goliath/migrations/20260912_acceptance_readiness.sql');
+const invitationFlow=read('apps/goliath/migrations/20260912_invitation_flow_v2.sql');
 const devRoleSeed=read('apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql');
 
 function assert(condition,message){if(!condition)throw new Error(message);}
 function contains(text,values,label){for(const v of values)assert(text.includes(v),`${label}: missing ${v}`);}
 
-contains(index,['Project Control & Decision Intelligence','/app.js','/governance-ui.js','/pmo-controls-ui.js','/role-model-ui.js','/diagnostics-ui.js'],'index');
+contains(index,['Project Control & Decision Intelligence','/app.js','/governance-ui.js','/pmo-controls-ui.js','/role-model-ui.js','/diagnostics-ui.js','/invitation-ui.js'],'index');
 assert(!index.includes('Project Management Tracker'),'legacy tracker branding must not return');
 assert(!app.includes('Project Management Tracker'),'legacy tracker branding must not return in app');
 
@@ -86,6 +88,17 @@ contains(diagnostics,[
   'Evidence coverage diagnostics'
 ],'diagnostics UI');
 
+contains(invitations,[
+  'Step 1 of 2',
+  'Step 2 of 2',
+  'Send invitation by email',
+  'Copy invitation token',
+  'same invitation',
+  'does not close on blur',
+  'admin_create_identity_invitation',
+  'admin_record_identity_invitation_share'
+],'invitation UI');
+
 contains(roleCatalog,[
   'platform_identity.role_catalog',
   'Enterprise Admin',
@@ -124,6 +137,15 @@ contains(acceptanceReadiness,[
   "'releaseReady',false"
 ],'acceptance readiness');
 
+contains(invitationFlow,[
+  'admin_invitation_targets',
+  'admin_create_identity_invitation',
+  'v_reused',
+  'admin_record_identity_invitation_share',
+  'copy-token',
+  'email-client'
+],'invitation backend');
+
 contains(devRoleSeed,[
   'DEVELOPMENT-ONLY',
   'GDEV-DL-AISHA',
@@ -147,7 +169,7 @@ contains(legacyLockdown,[
 ],'legacy public RPC lockdown');
 
 contains(vercel,['deploymentEnabled','develop/goliath'],'deployment isolation');
-contains(ci,['node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','node --check apps/goliath/role-model-ui.js','node --check apps/goliath/diagnostics-ui.js','governance_authorization_hardening','baseline_immutability_hardening','integration_health_outcome_metrics','legacy_public_rpc_lockdown','role_catalog_admin_coverage','reconciliation_evidence_diagnostics','acceptance_readiness'],'CI governance checks');
+contains(ci,['node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','node --check apps/goliath/role-model-ui.js','node --check apps/goliath/diagnostics-ui.js','node --check apps/goliath/invitation-ui.js','governance_authorization_hardening','baseline_immutability_hardening','integration_health_outcome_metrics','legacy_public_rpc_lockdown','role_catalog_admin_coverage','reconciliation_evidence_diagnostics','acceptance_readiness','20260912_invitation_flow_v2.sql'],'CI governance checks');
 
 const migrationFiles=[
   '20260912_commitment_evidence_foundation.sql',
@@ -167,7 +189,8 @@ const migrationFiles=[
   '20260912_legacy_public_rpc_lockdown.sql',
   '20260912_role_catalog_admin_coverage.sql',
   '20260912_reconciliation_evidence_diagnostics.sql',
-  '20260912_acceptance_readiness.sql'
+  '20260912_acceptance_readiness.sql',
+  '20260912_invitation_flow_v2.sql'
 ];
 for(const f of migrationFiles)assert(fs.existsSync(path.join(root,'apps/goliath/migrations',f)),`missing migration ${f}`);
 assert(fs.existsSync(path.join(root,'apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql')),'missing development role-coverage seed');

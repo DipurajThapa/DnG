@@ -31,6 +31,7 @@ jobs:
           node --check apps/goliath/pmo-controls-ui.js
           node --check apps/goliath/role-model-ui.js
           node --check apps/goliath/diagnostics-ui.js
+          node --check apps/goliath/invitation-ui.js
           node --check apps/goliath/runtime-config.js
           node --check apps/goliath/tests/development-contract-check.mjs
 
@@ -50,6 +51,7 @@ jobs:
           grep -q 'pmo-controls-ui.js' apps/goliath/index.html
           grep -q 'role-model-ui.js' apps/goliath/index.html
           grep -q 'diagnostics-ui.js' apps/goliath/index.html
+          grep -q 'invitation-ui.js' apps/goliath/index.html
           grep -q 'Commitment + Evidence + Decision Intelligence' docs/architecture/DEVELOPMENT_ENVIRONMENT.md
           grep -q 'Activities become execution evidence' docs/architecture/CURRENT_VS_TARGET_GAP_MATRIX_2026-09-12.md
           grep -q 'No separate status dataset' apps/goliath/app.js
@@ -63,6 +65,9 @@ jobs:
           grep -q 'Configuration is not treated as proof' apps/goliath/role-model-ui.js
           grep -q 'not an acting-as' apps/goliath/migrations/20260912_role_catalog_admin_coverage.sql
           grep -q 'does not silently discard ambiguous records' apps/goliath/diagnostics-ui.js
+          grep -q 'Step 1 of 2' apps/goliath/invitation-ui.js
+          grep -q 'Send invitation by email' apps/goliath/invitation-ui.js
+          grep -q 'Copy invitation token' apps/goliath/invitation-ui.js
 
       - name: Validate migration set is present
         shell: bash
@@ -92,6 +97,7 @@ jobs:
           test -f apps/goliath/migrations/20260912_role_catalog_admin_coverage.sql
           test -f apps/goliath/migrations/20260912_reconciliation_evidence_diagnostics.sql
           test -f apps/goliath/migrations/20260912_acceptance_readiness.sql
+          test -f apps/goliath/migrations/20260912_invitation_flow_v2.sql
           test -f apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql
 
       - name: Validate governance surfaces have no silent bypass
@@ -117,6 +123,10 @@ jobs:
           grep -q "evidence_gap_diagnostics" apps/goliath/diagnostics-ui.js
           grep -q "integration_reconciliation_issues_v2" apps/goliath/migrations/20260912_reconciliation_evidence_diagnostics.sql
           grep -q "releaseReady" apps/goliath/migrations/20260912_acceptance_readiness.sql
+          grep -q "admin_invitation_targets" apps/goliath/migrations/20260912_invitation_flow_v2.sql
+          grep -q "v_reused" apps/goliath/migrations/20260912_invitation_flow_v2.sql
+          grep -q "admin_record_identity_invitation_share" apps/goliath/migrations/20260912_invitation_flow_v2.sql
+          grep -q "does not close on blur" apps/goliath/invitation-ui.js
 
       - name: Run integrated development contract checks
         run: node apps/goliath/tests/development-contract-check.mjs
