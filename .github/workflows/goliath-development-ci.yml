@@ -29,6 +29,8 @@ jobs:
           node --check apps/goliath/app.js
           node --check apps/goliath/governance-ui.js
           node --check apps/goliath/pmo-controls-ui.js
+          node --check apps/goliath/role-model-ui.js
+          node --check apps/goliath/diagnostics-ui.js
           node --check apps/goliath/runtime-config.js
           node --check apps/goliath/tests/development-contract-check.mjs
 
@@ -46,6 +48,8 @@ jobs:
           grep -q 'Project Control & Decision Intelligence' apps/goliath/index.html
           grep -q 'governance-ui.js' apps/goliath/index.html
           grep -q 'pmo-controls-ui.js' apps/goliath/index.html
+          grep -q 'role-model-ui.js' apps/goliath/index.html
+          grep -q 'diagnostics-ui.js' apps/goliath/index.html
           grep -q 'Commitment + Evidence + Decision Intelligence' docs/architecture/DEVELOPMENT_ENVIRONMENT.md
           grep -q 'Activities become execution evidence' docs/architecture/CURRENT_VS_TARGET_GAP_MATRIX_2026-09-12.md
           grep -q 'No separate status dataset' apps/goliath/app.js
@@ -55,6 +59,10 @@ jobs:
           grep -q 'Approved baselines are immutable snapshots' apps/goliath/governance-ui.js
           grep -q 'Only evidence-supported measures are calculated' apps/goliath/pmo-controls-ui.js
           grep -q 'Do not estimate a lower number' apps/goliath/pmo-controls-ui.js
+          grep -q 'My responsibilities' apps/goliath/role-model-ui.js
+          grep -q 'Configuration is not treated as proof' apps/goliath/role-model-ui.js
+          grep -q 'not an acting-as' apps/goliath/migrations/20260912_role_catalog_admin_coverage.sql
+          grep -q 'does not silently discard ambiguous records' apps/goliath/diagnostics-ui.js
 
       - name: Validate migration set is present
         shell: bash
@@ -81,6 +89,10 @@ jobs:
           test -f apps/goliath/migrations/20260912_baseline_immutability_hardening.sql
           test -f apps/goliath/migrations/20260912_integration_health_outcome_metrics.sql
           test -f apps/goliath/migrations/20260912_legacy_public_rpc_lockdown.sql
+          test -f apps/goliath/migrations/20260912_role_catalog_admin_coverage.sql
+          test -f apps/goliath/migrations/20260912_reconciliation_evidence_diagnostics.sql
+          test -f apps/goliath/migrations/20260912_acceptance_readiness.sql
+          test -f apps/goliath/dev-seeds/20260912_goliath_dev_role_coverage.sql
 
       - name: Validate governance surfaces have no silent bypass
         shell: bash
@@ -98,6 +110,13 @@ jobs:
           grep -q "goliath_api.list_contexts" apps/goliath/migrations/20260912_legacy_public_rpc_lockdown.sql
           grep -q "goliath_api.workspace" apps/goliath/migrations/20260912_legacy_public_rpc_lockdown.sql
           grep -q "goliath_api.append_project_event" apps/goliath/migrations/20260912_legacy_public_rpc_lockdown.sql
+          grep -q "admin_role_coverage" apps/goliath/role-model-ui.js
+          grep -q "acceptance_readiness" apps/goliath/role-model-ui.js
+          grep -q "platform_identity.role_catalog" apps/goliath/migrations/20260912_role_catalog_admin_coverage.sql
+          grep -q "integration_reconciliation_queue" apps/goliath/diagnostics-ui.js
+          grep -q "evidence_gap_diagnostics" apps/goliath/diagnostics-ui.js
+          grep -q "integration_reconciliation_issues_v2" apps/goliath/migrations/20260912_reconciliation_evidence_diagnostics.sql
+          grep -q "releaseReady" apps/goliath/migrations/20260912_acceptance_readiness.sql
 
       - name: Run integrated development contract checks
         run: node apps/goliath/tests/development-contract-check.mjs
