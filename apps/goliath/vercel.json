@@ -1,5 +1,6 @@
 {
   "$schema":"https://openapi.vercel.sh/vercel.json",
+  "git":{"deploymentEnabled":{"develop/goliath":false}},
   "ignoreCommand":"node -e \"process.exit(process.env.VERCEL_GIT_COMMIT_REF==='main'?1:0)\"",
   "cleanUrls":true,
   "rewrites":[{"source":"/((?!styles\\.css|app\\.js|goliath-head\\.png).*)","destination":"/index.html"}],
