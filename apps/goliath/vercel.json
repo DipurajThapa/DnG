@@ -3,7 +3,7 @@
   "git":{"deploymentEnabled":{"develop/goliath":false}},
   "ignoreCommand":"node -e \"process.exit(process.env.VERCEL_GIT_COMMIT_REF==='main'?1:0)\"",
   "cleanUrls":true,
-  "rewrites":[{"source":"/((?!styles\\.css|app\\.js|governance-ui\\.js|pmo-controls-ui\\.js|role-model-ui\\.js|diagnostics-ui\\.js|invitation-ui\\.js|runtime-config\\.js|mutation-observer-guard\\.js|goliath-head\\.png).*)","destination":"/index.html"}],
+  "rewrites":[{"source":"/((?!styles\\.css|app\\.js|governance-ui\\.js|pmo-controls-ui\\.js|role-model-ui\\.js|diagnostics-ui\\.js|invitation-ui\\.js|capability-ui\\.js|policy-ui\\.js|runtime-config\\.js|mutation-observer-guard\\.js|goliath-head\\.png).*)","destination":"/index.html"}],
   "headers":[{"source":"/(.*)","headers":[
     {"key":"X-Content-Type-Options","value":"nosniff"},
     {"key":"X-Frame-Options","value":"DENY"},
