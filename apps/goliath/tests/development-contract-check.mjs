@@ -10,6 +10,7 @@ const index=read('apps/goliath/index.html');
 const vercel=read('apps/goliath/vercel.json');
 const ci=read('.github/workflows/goliath-development-ci.yml');
 const baselineImmutability=read('apps/goliath/migrations/20260912_baseline_immutability_hardening.sql');
+const legacyLockdown=read('apps/goliath/migrations/20260912_legacy_public_rpc_lockdown.sql');
 
 function assert(condition,message){if(!condition)throw new Error(message);}
 function contains(text,values,label){for(const v of values)assert(text.includes(v),`${label}: missing ${v}`);}
@@ -67,8 +68,17 @@ contains(baselineImmutability,[
   'edapos_reject_mutation_on_append_only'
 ],'baseline immutability');
 
+contains(legacyLockdown,[
+  'goliath_api.list_contexts()',
+  'goliath_api.workspace(text)',
+  'goliath_api.append_context_event',
+  'goliath_api.append_project_event',
+  'goliath_api.require_context(text)',
+  'goliath_api.context_allows_project(text,text)'
+],'legacy public RPC lockdown');
+
 contains(vercel,['deploymentEnabled','develop/goliath'],'deployment isolation');
-contains(ci,['node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','governance_authorization_hardening','baseline_immutability_hardening','integration_health_outcome_metrics'],'CI governance checks');
+contains(ci,['node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','governance_authorization_hardening','baseline_immutability_hardening','integration_health_outcome_metrics','legacy_public_rpc_lockdown'],'CI governance checks');
 
 const migrationFiles=[
   '20260912_commitment_evidence_foundation.sql',
@@ -84,7 +94,8 @@ const migrationFiles=[
   '20260912_initial_baseline_approval.sql',
   '20260912_governance_authorization_hardening.sql',
   '20260912_baseline_immutability_hardening.sql',
-  '20260912_integration_health_outcome_metrics.sql'
+  '20260912_integration_health_outcome_metrics.sql',
+  '20260912_legacy_public_rpc_lockdown.sql'
 ];
 for(const f of migrationFiles)assert(fs.existsSync(path.join(root,'apps/goliath/migrations',f)),`missing migration ${f}`);
 
