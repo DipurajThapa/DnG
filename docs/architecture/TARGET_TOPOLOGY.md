@@ -75,6 +75,12 @@ One Git history, two release boundaries.
 
 PostgreSQL is the target transactional store. Browser clients never receive a PostgreSQL password. Sensitive operations go through authenticated server-side/API/database functions that re-evaluate authority at commit time.
 
+## Governance relationships
+
+Organisation membership, team membership and project assignment are separate relationships. Organisation Admin may admit people, create teams and appoint Project Admins. Project Admin may assign admitted people and existing teams only within the governed project. Neither role receives delivery visibility merely because it administers access.
+
+A team can be assigned to many projects, and a project can use many teams. A person can receive direct project access in addition to team-derived access. Every effective responsibility retains its source so reassignment can remove only the intended relationship.
+
 ## Integrations
 
 External facts follow:
