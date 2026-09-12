@@ -5,6 +5,7 @@ const root=process.cwd();
 const read=p=>fs.readFileSync(path.join(root,p),'utf8');
 const app=read('apps/goliath/app.js');
 const gov=read('apps/goliath/governance-ui.js');
+const pmo=read('apps/goliath/pmo-controls-ui.js');
 const index=read('apps/goliath/index.html');
 const vercel=read('apps/goliath/vercel.json');
 const ci=read('.github/workflows/goliath-development-ci.yml');
@@ -13,7 +14,7 @@ const baselineImmutability=read('apps/goliath/migrations/20260912_baseline_immut
 function assert(condition,message){if(!condition)throw new Error(message);}
 function contains(text,values,label){for(const v of values)assert(text.includes(v),`${label}: missing ${v}`);}
 
-contains(index,['Project Control & Decision Intelligence','/app.js','/governance-ui.js'],'index');
+contains(index,['Project Control & Decision Intelligence','/app.js','/governance-ui.js','/pmo-controls-ui.js'],'index');
 assert(!index.includes('Project Management Tracker'),'legacy tracker branding must not return');
 assert(!app.includes('Project Management Tracker'),'legacy tracker branding must not return in app');
 
@@ -47,6 +48,19 @@ contains(gov,[
   'Approved baselines are immutable snapshots'
 ],'governance UI');
 
+contains(pmo,[
+  'integration_health',
+  'outcome_metrics',
+  'record_admin_effort_sample',
+  'Only evidence-supported measures are calculated',
+  'Do not estimate a lower number',
+  'M1_adminEffort',
+  'M4_decisionLatency',
+  'M8_evidenceCoverage',
+  'M9_dataFreshness',
+  'M12_notificationNoise'
+],'PMO controls');
+
 contains(baselineImmutability,[
   'trg_pc_baselines_no_update',
   'trg_pc_baselines_no_delete',
@@ -54,7 +68,7 @@ contains(baselineImmutability,[
 ],'baseline immutability');
 
 contains(vercel,['deploymentEnabled','develop/goliath'],'deployment isolation');
-contains(ci,['node --check apps/goliath/governance-ui.js','governance_authorization_hardening','baseline_immutability_hardening'],'CI governance checks');
+contains(ci,['node --check apps/goliath/governance-ui.js','node --check apps/goliath/pmo-controls-ui.js','governance_authorization_hardening','baseline_immutability_hardening','integration_health_outcome_metrics'],'CI governance checks');
 
 const migrationFiles=[
   '20260912_commitment_evidence_foundation.sql',
@@ -69,7 +83,8 @@ const migrationFiles=[
   '20260912_requirements_traceability_foundation.sql',
   '20260912_initial_baseline_approval.sql',
   '20260912_governance_authorization_hardening.sql',
-  '20260912_baseline_immutability_hardening.sql'
+  '20260912_baseline_immutability_hardening.sql',
+  '20260912_integration_health_outcome_metrics.sql'
 ];
 for(const f of migrationFiles)assert(fs.existsSync(path.join(root,'apps/goliath/migrations',f)),`missing migration ${f}`);
 
